@@ -16,11 +16,11 @@ catch(Exception e)
 {
 	e.printStackTrace();
 }
-InformationProcessing iP = new InformationProcessing(conn);
+//InformationProcessing iP = new InformationProcessing(conn);
 
-MedicalRecords mR = new MedicalRecords(conn);
+//MedicalRecords mR = new MedicalRecords(conn);
 
-Billing b = new Billing(conn);
+//Billing b = new Billing(conn);
 
 Reports r= new Reports(conn);
 System.out.println('Which task do you want to perform?');
@@ -31,13 +31,13 @@ Scanner reader = new Scanner(System.in);
 		
 		switch(choice) {
 		case 1:
-			iP.menu();
+			//iP.menu();
 			break;
 		case 2:
-			mR.mymenu();
+			//mR.mymenu();
 			break;
 		case 3:
-			b.menu();
+			//b.menu();
 			break;
 		case 4:
 			r.billing_menu();
@@ -46,9 +46,9 @@ Scanner reader = new Scanner(System.in);
 		System.out.println('Please enter correct choice');
 		}
 		
-		iP.close();
-		mR.close();
-		b.close();
+		//iP.close();
+		//mR.close();
+		//b.close();
 		r.close();
 		reader.close();
 	
