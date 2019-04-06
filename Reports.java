@@ -1,16 +1,6 @@
 import java.sql.*;
 import java.util.*;
 
-/*This class deals with reports where the following are done
- * 1.report occupancy by city
- * 2.report occupancy by hotel_id
- * 3.report occupancy by room type
- * 4.Rooms occupancy by date range
- * 5.staff grouped by role
- * 6.staff at customer service
- * 7.revenue
- */
-
 public class Reports {
 	Connection conn;
 	static PreparedStatement stmt;
@@ -36,7 +26,6 @@ public class Reports {
 
 	public void mymenu() {
 		System.out.println("Reports\n");
-		//list of options for the user to choose in reports
 		System.out.println("Enter the report you want to view:\n"
 				+ "1. Medical history for a given Patient for a certain time period\n" 
 				+ "2. Current usage status for all wards/ beds\n"
@@ -49,7 +38,6 @@ public class Reports {
 		input = reader.nextInt();
 		switch (input) {
 		case 1:			
-			// occupancy by city
 			System.out.println("Enter the Patient ID : ");
 			int pid = reader.nextInt();
 			System.out.println("Enter the Month (MM) : ");
@@ -100,7 +88,6 @@ public class Reports {
 			break;
 
 		case 3:
-			// occupancy by room type
 			System.out.println("Enter the Month (MM) : ");
 			int month = reader.next();
 			System.out.println("Enter the Year (YYYY) : ");
@@ -120,7 +107,6 @@ public class Reports {
 			break;
 
 		case 4:
-			// occupancy by date range
 			str = "select (sum(type) - SUM(avail))/sum(type)*100 from Ward";
 
 			try {
@@ -136,7 +122,6 @@ public class Reports {
 			break;
 
 		case 5:
-			// list of staff grouped by their role
 			str = "select wNumber, (type - avail)/type*100 AS 'usage%' from Ward";
 
 			try {
@@ -163,7 +148,6 @@ public class Reports {
 			break;
 
 		case 7:
-			// revenue of the particular hotel with in the given date range
 			System.out.println("Enter the Staff ID");
 			int sid = reader.nextInt();
 			str = "SELECT hR.pId FROM hasRecord as hR WHERE hR.mId IN (SELECT c.mId FROM consults AS c WHERE sId =" +sid+")  AND hR.mId IN (SELECT aT.mId FROM addedTo AS aT WHERE aT.cId IN (SELECT C.cId FROM CheckInInfo AS C WHERE C.enddate IS NULL))";
@@ -179,7 +163,6 @@ public class Reports {
 			break;
 
 		case 8:
-			// revenue of the particular hotel with in the given date range
 			str1 = "Select jobTitle, count(*) AS 'No. of Staff'  from Staff group by jobTitle";
 			str2 = "SELECT * FROM Staff ORDER BY jobTitle;"
 			try {
