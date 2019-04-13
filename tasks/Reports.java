@@ -25,7 +25,7 @@ public class Reports {
 		close(conn);
 	}
 
-	public void myMenu() {
+	public void menu() {
 		System.out.println("\n\tReports\t\n");
 		while(true){
 			System.out.println("\n\nEnter the report you want to view:\n"

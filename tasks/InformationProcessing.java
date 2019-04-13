@@ -25,7 +25,7 @@ public class InformationProcessing {
 		close(conn);
 	}
 
-	public void myMenu() {
+	public void menu() {
 		System.out.println("\n\tInformation Processing\t\n");
 		while(true){
 
@@ -114,40 +114,47 @@ public class InformationProcessing {
 
 				case 4: 
                 
-                    System.out.println("Enter staff ID");
+                    System.out.println("Enter Staff ID");
                     String sid = reader.next()
-                    System.out.println("Enter staff name");
+                    System.out.println("Enter Staff name");
                     String sname = reader.next();
-                    System.out.println("Enter Professional title");
+                    System.out.println("Enter Professional title (or NULL)");
                     String ptitle = reader.next();
-                    System.out.println("Enter phone");
+                    System.out.println("Enter Phone Number");
                     String sphone = reader.next();
                     System.out.println("Enter Address");
                     String saddress = reader.next();
                     
-                    System.out.println("Enter which Job title which you want to enter: Doctor, Nurse, Billing Operator, 4. Front Desk Operator");
+                    System.out.println("Choose the Job Title: \n\t1. Doctor\n\t. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
                     String jtitle = reader.next();
-                    
-                    if(jtitle =="Doctor")
-                    {
-                    System.out.println("Enter Department ID");
-                    did = reader.next();
-                    str1 = "INSERT INTO belongsTo VALUES(" + sid + did+");";
-                    executeInsert(str1);
-                    System.out.println("Enter consultation fee");
-                    fee = reader.next();
-                    str = "INSERT INTO `Staff`"
-                    + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
-                    + sphone", "+ saddress +", " + fee");";
-                    }                 
-                    else
-                    {
-                    str = "INSERT INTO Staff"
-                    + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
-                    + sphone", "+ saddress +", NULL);";
-                    
+                    switch(jtitle){
+                    	switch(jtitle){
+                    	case 1: 
+                    	System.out.println("Enter Consultation Fee");
+                    	String fee = reader.next();
+                    	str = "SELECT * FROM Department;";
+                    	executeTheQuery(str);	
+	                  	System.out.println("\nEnter Department ID");
+	                    did = reader.next();
+	                    str1 = "INSERT INTO belongsTo VALUES(" + sid +", " +did+");";
+	                    executeInsert(str1);
+	                    System.out.println("Enter consultation fee");
+	                    fee = reader.next();
+	                    str = "INSERT INTO `Staff`"
+	                    + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
+	                    + sphone", "+ saddress +", " + fee");";
+                    	
+                    	case 2:
+                    	case 3:
+                    	case 4:
+                    		str = "INSERT INTO Staff"
+			                + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
+			                + sphone", "+ saddress +", NULL);";                   
+			               			break;
+                    	
+                    	default: System.out.println("Please select a valid option");
+							break;
                     }  
-   
                     executeInsert(str);
                     break;
 
@@ -163,25 +170,29 @@ public class InformationProcessing {
                     System.out.println("Enter Address");
                     String saddress = reader.next();
                     
-                    System.out.println("Enter which Job title which you want to enter: Doctor, Nurse, Billing Operator, 4. Front Desk Operator");
+                    System.out.println("Choose the Job Title: \n\t1. Doctor\n\t. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
                     String jtitle = reader.next();
+                    switch(jtitle){
+                    	case 1: 
+                    	System.out.println("Enter consultation fee");
+                    	String fee = reader.next();
+	                    	str = "UPDATE Staff SET sName = "  + sname 
+	                    	+ ",  jobTitle = " + jtitle +", professionalTitle = "+ptitle +"', pPhone = "  + sphone
+	                    	+ ", pAddress = "+ saddress +", cFee = " + fee +" where sId = " + sid + ";";
+                    		break;
+                    	
+                    	case 2:
+                    	case 3:
+                    	case 4:
+                    		str = "UPDATE Staff SET sName = "  + sname 
+                    		+ ",  = jobTitle" + jtitle +", professionalTitle = "+ptitle +"', pPhone = "  + sphone
+                    		+ ", pAddress = "+ saddress +", cFee = NULL where sId = " + sid + ";";                   
+                   			break;
+                    	
+                    	default: System.out.println("Please select a valid option");
+							break;
+                    }
                     
-                    if(jtitle =="Doctor" and  )
-                    {
-                    
-                    System.out.println("Enter consultation fee");
-                    fee = reader.next();
-                    str = "UPDATE Staff SET sName = "  + sname 
-                    + ",  = jobTitle" + jtitle +", professionalTitle = "+ptitle +"', pPhone = "  + sphone
-                    + ", pAddress = "+ saddress +", cFee = " + fee +" where sId = " + sid + ";";
-                    }                 
-                    else
-                    {
-                    str = "UPDATE Staff SET sName = "  + sname 
-                    + ",  = jobTitle" + jtitle +", professionalTitle = "+ptitle +"', pPhone = "  + sphone
-                    + ", pAddress = "+ saddress +", cFee = NULL where sId = " + sid + ";";                   
-                    }  
-
                     executeUpdate(str);
                     break;
 
@@ -208,7 +219,7 @@ public class InformationProcessing {
 					+ "VALUES ( " + wnumber + " , "+ type + ", "+ type +", "+ wcost +");";
 					executeInsert(str);
 
-					str = "INSERT INTO inChargeOf"
+					str = "INSERT ignore INTO inChargeOf"
 					+ "VALUES ( " + sid + " , "+ wnumber +");";
 					executeInsert(str);
 
@@ -230,7 +241,7 @@ public class InformationProcessing {
 					str = "Update inChargeOf SET sId = " + sid + " WHERE wNumber = "+ wnumber +";";
 					executeInsert(str);
 					break;
-					
+
 				case 9:
 					System.out.println("Enter the Ward Number to delete: ");
 					
@@ -244,8 +255,11 @@ public class InformationProcessing {
 				case 10:
 					str = "SELECT sum(avail) FROM Ward;"
 					int avail = getVariable(str);
-
-					if(avail <= 0 ){
+					if(avail == null){
+							System.out.println("Could not retrieve some information");
+							break;
+					}
+					if(avail <= 0){
 						System.out.println("Hospital full. Cannot admit patient.");
 						break;
 					}
@@ -279,6 +293,10 @@ public class InformationProcessing {
 						default:		
 							str = " SELECT MAX(mId) FROM MedicalRecord;";
 							int mid = getVariable(str);
+							if(mid == null){
+								System.out.println("Could not retrieve some information");
+								break;
+							}
 
 							System.out.println("Enter check in date (YYYY-MM-DD): ");
 							String startdate = reader.next();
@@ -303,14 +321,14 @@ public class InformationProcessing {
 							//str = "INSERT INTO addedTo VALUES(" +(mid + 1)+", "+ (cid+1) + ");";
 							//executeInsert(str);
 
-							str = "INSERT INTO hasRecord VALUES(" +(mid + 1)+", "+ pid + ");";
+							str = "INSERT IGNORE INTO hasRecord VALUES(" +(mid + 1)+", "+ pid + ");";
 							executeInsert(str);
 
 							str = "Select sId, sName FROM Staff where jobTitle = \"Doctor\"";
 							executeTheQuery(str);
 							System.out.println("\nEnter the staff id of the doctor consulted : ");
 							String sid = reader.next();
-							str = "INSERT INTO consults VALUES(" +(mid + 1)+", "+ sid + ");";
+							str = "INSERT IGNORE INTO consults VALUES(" +(mid + 1)+", "+ sid + ");";
 							executeInsert(str);
 
 							str = "SELECT * FROM Ward WHERE avail > 0;";
@@ -319,13 +337,14 @@ public class InformationProcessing {
 							System.out.println("\nChoose the Ward Number from the available list : ");
 							String wnumber = reader.next();
 
-							str = "INSERT INTO assigns VALUES(" +(mid + 1)+", "+ wnumber + ");";
+							str = "INSERT IGNORE INTO assigns VALUES(" +(mid + 1)+", "+ wnumber + ");";
 							executeInsert(str);						
 
 							str = "UPDATE Ward SET avail = avail - 1 WHERE wNumber = " + wnumber + ";";
 							executeUpdate(str);
 
 							break;
+							}
 
 					break;
 		
@@ -335,19 +354,22 @@ public class InformationProcessing {
 						str = "SELECT MAX(mId) FROM hasRecord WHERE pid = " + pid + ";";
 
 						int mid = getVariable(str);
+						if(mid == null){
+							System.out.println("Could not retrieve some information");
+							break;
+						}
 						System.out.println("Enter check out date (YYYY-MM-DD): ");
 						String enddate = reader.next();
 
 						str = "UPDATE MedicalRecord SET enddate = '" + enddate +"' where mId = " + mid + " AND enddate IS NULL";		
 						executeUpdate(str);
 
-						/*int mid;
-						str = "select mId from addedTo where cId = " + cId +";";
-						getVariable(str, mid);
-						*/
 						str = "SELECT wNumber FROM assigns where mId = " + mid +";";
 						int wnumber = getVariable(str);
-
+						if(wnumber == null){
+							System.out.println("Could not retrieve some information");
+							break;
+						}
 						str = "UPDATE Ward SET avail = avail + 1 WHERE wNumber = " + wnumber + " AND avail < type;";
 						executeUpdate(str);
 						break;
@@ -395,11 +417,22 @@ public class InformationProcessing {
 					String tname = reader.next();
 					System.out.println("Enter the Test Cost : ");
 					String tcost = reader.next();
+
+					str = "SELECT * from Department;"
+					executeTheQuery(str);
+
+					System.out.println("\nEnter the Department ID that it is done in : ");
+					String did = reader.next();
+					
 					
 					str = "INSERT INTO Tests"
 					+ "VALUES ( " + tid + " , "+ tname + ", "+ tcost +");";
 	
 					executeInsert(str);
+
+					str = "INSERT IGNORE INTO doneBy"
+					+ "VALUES ( " + tid + " , "+ did +");";
+						executeInsert(str);
 					break;
 
 				case 16:

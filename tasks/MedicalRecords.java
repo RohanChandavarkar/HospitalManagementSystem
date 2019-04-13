@@ -16,13 +16,17 @@ public class MedicalRecords{
 		}
 	}
 
-	public void myMenu(){
+	public void menu(){
 		while (True){
 			System.out.println("Updating Medical Records\n");
 			System.out.println("Enter patient ID:");
 			String pid = reader.next();
 			str = "SELECT MAX(mId) from hasRecord where pId = "+pid+";";
 			int v = getVariable(str);
+			if(v == null){
+				System.out.println("Could not retrieve some information");
+				break;
+			}
 
 			str = "SELECT enddate from MedicalRecord where mId= " + v + ";";
 			try{

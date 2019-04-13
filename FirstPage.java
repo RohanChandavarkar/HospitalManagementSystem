@@ -34,13 +34,13 @@ public class FirstPage
 					iP.menu();
 					break;
 				case 2:
-					mR.mymenu();
+					mR.menu();
 					break;
 				case 3:
 //					b.menu();
 					break;
 				case 4:
-					r.myMenu();
+					r.menu();
 					break;
 				case 5:
 					flag = false;
