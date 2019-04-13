@@ -2,7 +2,7 @@ package tasks;
 import java.sql.*;
 import java.util.*;
 
-public class Reports {
+public class Billing {
 	Connection conn;
 	static PreparedStatement stmt;
 	static ResultSet rs;
@@ -11,7 +11,7 @@ public class Reports {
 	static Integer ssn, account_number, card_number,expiry_month,expiry_year,routing_number; 
 	static Scanner reader = new Scanner(System.in);
 
-	public Reports(Connection conn) {
+	public Billing (Connection conn) {
 		try {
 			this.conn = conn;
 		} catch (Exception e) {
@@ -26,7 +26,7 @@ public class Reports {
 		close(conn);
 	}
 
-	public void myMenu() {
+	public void menu() {
 		System.out.println("\n\t Billing Reports\t\n");
 		while(true){
 			System.out.println("\n\nSelect the required alternative\n"
