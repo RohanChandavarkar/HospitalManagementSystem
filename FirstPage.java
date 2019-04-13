@@ -18,7 +18,7 @@ public class FirstPage
 		
 		InformationProcessing iP = new InformationProcessing(conn);
 		MedicalRecords mR = new MedicalRecords(conn);
-		//Billing b = new Billing(conn);
+		Billing b = new Billing(conn);
 		Reports r= new Reports(conn);
 
 		boolean flag = true;
@@ -37,7 +37,7 @@ public class FirstPage
 					mR.menu();
 					break;
 				case 3:
-//					b.menu();
+					b.menu();
 					break;
 				case 4:
 					r.menu();
@@ -51,7 +51,7 @@ public class FirstPage
 		}		
 		iP.close();
 		mR.close();
-//		b.close();
+		b.close();
 		r.close();
 		reader.close();
 	}
