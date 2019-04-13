@@ -16,8 +16,8 @@ public class FirstPage
 			e.printStackTrace();
 		}
 		
-		//InformationProcessing iP = new InformationProcessing(conn);
-		//MedicalRecords mR = new MedicalRecords(conn);
+		InformationProcessing iP = new InformationProcessing(conn);
+		MedicalRecords mR = new MedicalRecords(conn);
 		//Billing b = new Billing(conn);
 		Reports r= new Reports(conn);
 
@@ -31,10 +31,10 @@ public class FirstPage
 			choice = reader.nextInt();
 			switch(choice) {
 				case 1:
-//					iP.menu();
+					iP.menu();
 					break;
 				case 2:
-//					mR.mymenu();
+					mR.mymenu();
 					break;
 				case 3:
 //					b.menu();
@@ -49,8 +49,8 @@ public class FirstPage
 					System.out.println("Please select a valid option");
 			}
 		}		
-//		iP.close();
-//		mR.close();
+		iP.close();
+		mR.close();
 //		b.close();
 		r.close();
 		reader.close();
