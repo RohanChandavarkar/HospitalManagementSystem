@@ -50,8 +50,7 @@ public class InformationProcessing {
 					+ "18. Enter department Information\n" 
 					+ "19. Update department Information\n"
 					+ "20. Delete department Information \n" 
-					+ "21. Display information"
-					+ "22. Exit\n");
+					+ "21. Exit\n");
 
 			int input = reader.nextInt();
 			switch (input) {
@@ -74,7 +73,7 @@ public class InformationProcessing {
 
 					str = "INSERT INTO `Patient`"
 					+ "VALUES ( " + pid + " , '"+ pname + "', '"+ pssn +"', '"+pdob +"', '"
-					+ pgender + "', "+ pphone +", '" + paddr + "'');";
+					+ pgender + "', "+ pphone +", '" + paddr + "');";
 	
 					executeInsert(str);
 					break;
@@ -95,9 +94,9 @@ public class InformationProcessing {
 					System.out.println("Address : ");
 					String paddr = reader.next();
 
-					str = "UPDATE Patient SET pName = "  + pname 
-					+ ", SSN = '" + pssn +"', DOB = '"+pdob +"', pGender = '"  + pgender
-					+ "', pPhone = "+ pphone +", pAddres = '" + paddr + "' where pId = " + pid + ";";
+					str = "UPDATE Patient SET pName = '"  + pname 
+					+ "', SSN = '" + pssn +"', DOB = '"+pdob +"', pGender = '"  + pgender
+					+ "', pPhone = "+ pphone +", pAddress = '" + paddr + "' where pId = " + pid + ";";
 	
 					executeUpdate(str);
 					break;
@@ -118,14 +117,16 @@ public class InformationProcessing {
                     String sid = reader.next();
                     System.out.println("Enter Staff name");
                     String sname = reader.next();
-                    System.out.println("Enter Professional title (or NULL)");
+					System.out.println("Gender (M/F): ");
+                    String pgender = reader.next();
+					System.out.println("Enter Professional title (or NULL)");
                     String ptitle = reader.next();
                     System.out.println("Enter Phone Number");
                     String sphone = reader.next();
                     System.out.println("Enter Address");
                     String saddress = reader.next();
                     
-                    System.out.println("Choose the Job Title: \n\t1. Doctor\n\t. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
+                    System.out.println("Choose the Job Title: \n\t1. Doctor\n\t2. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
                     int jtitle = reader.nextInt();
                     switch(jtitle){
                     	case 1: {
@@ -138,16 +139,26 @@ public class InformationProcessing {
 		                    System.out.println("Enter consultation fee");
 		                    String fee = reader.next();
 		                	str = "INSERT INTO `Staff`"
-		                    + "VALUES ( " + sid+" , '"+ sname + "', '"+ jtitle +"', '"+ptitle+"', "
+		                    + "VALUES ( " + sid+" , '"+ sname + "', '" + pgender + "', 'Doctor', '"+ptitle+"', "
 		                    + sphone + ", '"+ saddress +"', " + fee + ");";
 		                	break;
 		                }
-                    	case 2:
-                    	case 3:
+                    	case 2: {
+                    		str = "INSERT INTO Staff "
+			                + "VALUES ( " + sid+" , '"+ sname + "', '" + pgender + "', 'Nurse', '"+ptitle+"', "
+			                + sphone + ", '"+ saddress +"', NULL);";               
+	               			break;
+	               		}
+                    	case 3:{
+                    		str = "INSERT INTO Staff "
+			                + "VALUES ( " + sid+" , '"+ sname +"', '" + pgender +  "', 'Billing Operator', '"+ptitle+"', "
+			                + sphone + ", '"+ saddress +"', NULL);";               
+	               			break;
+	               		}
                     	case 4: {
-                    		str = "INSERT INTO Staff"
-			                + "VALUES ( " + sid+" , '"+ sname + "', '"+ jtitle +"', '"+ptitle+"', "
-			                + sphone + ", "+ saddress +", NULL);";               
+                    		str = "INSERT INTO Staff "
+			                + "VALUES ( " + sid+" , '"+ sname + "', '" + pgender + "', 'Front Desk Operator', '"+ptitle+"', "
+			                + sphone + ", '"+ saddress +"', NULL);";               
 	               			break;
 	               		}
                     	
@@ -163,30 +174,40 @@ public class InformationProcessing {
                     String sid = reader.next();
                     System.out.println("Enter staff name");
                     String sname = reader.next();
-                    System.out.println("Enter Professional title");
+					System.out.println("Gender (M/F): ");
+                    String pgender = reader.next();
+					System.out.println("Enter Professional title");
                     String ptitle = reader.next();
                     System.out.println("Enter phone");
                     String sphone = reader.next();
                     System.out.println("Enter Address");
                     String saddress = reader.next();
                     
-                    System.out.println("Choose the Job Title: \n\t1. Doctor\n\t. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
+                    System.out.println("Choose the Job Title: \n\t1. Doctor\n\t2. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
                     int jtitle = reader.nextInt();
                     switch(jtitle){
                     	case 1: 
                     	System.out.println("Enter consultation fee");
                     	String fee = reader.next();
-	                    	str = "UPDATE Staff SET sName = "  + sname 
-	                    	+ ",  jobTitle = " + jtitle +", professionalTitle = "+ptitle +"', pPhone = "  + sphone
-	                    	+ ", pAddress = "+ saddress +", cFee = " + fee +" where sId = " + sid + ";";
+	                    	str = "UPDATE Staff SET sName = '"  + sname + "', sGender = '" + pgender 
+	                    	+ "',  jobTitle = 'Doctor', professionalTitle = '"+ptitle +"', pPhone = "  + sphone
+	                    	+ ", pAddress = '"+ saddress +"', consultationFee = " + fee +" where sId = " + sid + ";";
                     		break;
                     	
                     	case 2:
+                    		str = "UPDATE Staff SET sName = '"  + sname + "', sGender = '" + pgender 
+                    		+ "',  jobTitle = 'Nurse', professionalTitle = '"+ptitle +"', pPhone = "  + sphone
+                    		+ ", pAddress = '"+ saddress +"', consultationFee = NULL where sId = " + sid + ";";                   
+                   			break;
                     	case 3:
+                    		str = "UPDATE Staff SET sName = '"  + sname + "', sGender = '" + pgender
+                    		+ "',  jobTitle = 'Billing Operator', professionalTitle = '"+ptitle +"', pPhone = "  + sphone
+                    		+ ", pAddress = '"+ saddress +"', consultationFee = NULL where sId = " + sid + ";";                   
+                   			break;
                     	case 4:
-                    		str = "UPDATE Staff SET sName = "  + sname 
-                    		+ ",  = jobTitle" + jtitle +", professionalTitle = "+ptitle +"', pPhone = "  + sphone
-                    		+ ", pAddress = "+ saddress +", cFee = NULL where sId = " + sid + ";";                   
+                    		str = "UPDATE Staff SET sName = '"  + sname + "', sGender = '" + pgender
+                    		+ "',  jobTitle = 'Front Desk Operator', professionalTitle = '"+ptitle +"', pPhone = "  + sphone
+                    		+ ", pAddress = '"+ saddress +"', consultationFee = NULL where sId = " + sid + ";";                   
                    			break;
                     	
                     	default: System.out.println("Please select a valid option");
@@ -214,15 +235,18 @@ public class InformationProcessing {
 					String type = reader.next();
 					System.out.println("Enter charge per day : ");
 					String wcost = reader.next();
+					
+					str = "INSERT INTO Ward "
+					+ "VALUES ( " + wnumber + ", "+ type + ", "+ type +", "+ wcost +");";
+					executeInsert(str);
+
+					str = "SELECT * FROM Staff WHERE jobTitle = 'Nurse'";
+					executeTheQuery(str);
 					System.out.println("Enter the responsible nurse : ");
 					String sid = reader.next();
 
-					str = "INSERT INTO Ward"
-					+ "VALUES ( " + wnumber + " , "+ type + ", "+ type +", "+ wcost +");";
-					executeInsert(str);
-
-					str = "INSERT ignore INTO inChargeOf"
-					+ "VALUES ( " + sid + " , "+ wnumber +");";
+					str = "INSERT ignore INTO inChargeOf "
+					+ "VALUES ( " + sid + ", "+ wnumber +");";
 					executeInsert(str);
 
 					break;
@@ -235,11 +259,14 @@ public class InformationProcessing {
 					String type = reader.next();
 					System.out.println("Enter charge per day : ");
 					String wcost = reader.next();
-					System.out.println("Enter the responsible nurse : ");
-					String sid = reader.next();
-
+					
 					str = "UPDATE Ward SET type = "+ type + ", avail = "+ type +", wcost = "+ wcost +" WHERE wNumber = " + wnumber + ";";
 					executeUpdate(str);
+
+					str = "SELECT * FROM Staff WHERE jobTitle = 'Nurse'";
+					executeTheQuery(str);
+					System.out.println("Enter the responsible nurse : ");
+					String sid = reader.next();
 
 					str = "Update inChargeOf SET sId = " + sid + " WHERE wNumber = "+ wnumber +";";
 					executeInsert(str);
@@ -287,8 +314,8 @@ public class InformationProcessing {
 							String paddr = reader.next();
 
 							str = "INSERT INTO `Patient`"
-							+ "VALUES ( " + pid + " , "+ pname + ", "+ pssn +", '"+pdob +"', "
-							+ pgender + ", "+ pphone +", " + paddr + ");";
+							+ "VALUES ( " + pid + " , '"+ pname + "', '"+ pssn +"', '"+pdob +"', '"
+							+ pgender + "', "+ pphone +", '" + paddr + "');";
 			
 							executeInsert(str);
 						}
@@ -308,8 +335,8 @@ public class InformationProcessing {
 							System.out.println("Enter the processing treatment plan");
 							String ptp = reader.next();
 							
-							str = "INSERT INTO MedicalRecord VALUES(" + (mid+1) + ", " + startdate +"', null " + dd +", "
-							+ regfee +", " + ptp + ", Y, N);"; 
+							str = "INSERT INTO MedicalRecord VALUES(" + (mid+1) + ", '" + dd+ "', '" +startdate +"', null, "
+							+ regfee +", " + ptp + ", 'Y', 'N');"; 
 							executeInsert(str);
 
 							str = "INSERT IGNORE INTO hasRecord VALUES(" +(mid + 1)+", "+ pid + ");";
@@ -370,8 +397,8 @@ public class InformationProcessing {
 					System.out.println("Enter the Drug Cost : ");
 					String drugcost = reader.next();
 					
-					str = "INSERT INTO Drugs"
-					+ "VALUES ( " + drugid + " , "+ drugname + ", "+ drugcost +");";
+					str = "INSERT INTO Drugs "
+					+ "VALUES ( " + drugid + ", '"+ drugname + "', "+ drugcost +");";
 	
 					executeInsert(str);
 					break;
@@ -385,7 +412,7 @@ public class InformationProcessing {
 					System.out.println("Enter the Drug Cost : ");
 					String drugcost = reader.next();
 
-					str = "UPDATE Drugs SET drugName = "+ drugname + ", drugCost = "+ drugcost +" where drugId = " + drugid +";";
+					str = "UPDATE Drugs SET drugName = '"+ drugname + "', drugCost = "+ drugcost +" where drugId = " + drugid +";";
 					executeUpdate(str);
 					break;
 				}
@@ -416,7 +443,7 @@ public class InformationProcessing {
 					
 					
 					str = "INSERT INTO Tests "
-					+ "VALUES ( " + tid + " , "+ tname + ", "+ tcost +");";
+					+ "VALUES ( " + tid + " , '"+ tname + "', "+ tcost +");";
 	
 					executeInsert(str);
 
@@ -434,7 +461,7 @@ public class InformationProcessing {
 					System.out.println("Enter the Test Cost : ");
 					String tcost = reader.next();
 
-					str = "UPDATE Tests SET tName = "+ tname + ", tCost = "+ tcost +" where tId = " + tid +";";
+					str = "UPDATE Tests SET tName = '"+ tname + "', tCost = "+ tcost +" where tId = " + tid +";";
 					executeUpdate(str);
 					break;
 				}
@@ -456,8 +483,8 @@ public class InformationProcessing {
 					System.out.println("Enter the Department Name : ");
 					String dname = reader.next();
 					
-					str = "INSERT INTO Department"
-					+ "VALUES ( " + did + " , "+ dname +");";
+					str = "INSERT INTO Department "
+					+ "VALUES ( " + did + " , '"+ dname +"');";
 					executeInsert(str);
 					break;
 				}
@@ -468,7 +495,7 @@ public class InformationProcessing {
 					System.out.println("Enter the Department Name : ");
 					String dname = reader.next();
 
-					str = "UPDATE Ward SET deptName = "+ dname + " WHERE deptId = " + did + ";";
+					str = "UPDATE Department SET deptName = '"+ dname + "' WHERE deptId = " + did + ";";
 					executeUpdate(str);
 					break;
 				}
@@ -482,19 +509,7 @@ public class InformationProcessing {
 					break;
 				}
 
-				case 21: {
-					System.out.println("Enter PID to display information about");
-					int pid = reader.nextInt();
-
-					System.out.println("All Medical Records of the Patient: \n");
-					
-					str = "SELECT * FROM MedicalRecord, hasRecord WHERE hasRecord.pId = " + pid
-					+ " ORDER BY MedicalRecord.startdate DESC;";
-					executeTheQuery(str);
-					break;
-				}
-					
-				case 22: return;
+				case 21: return;
 				
 				default:
 					System.out.println("Please select a valid option");
