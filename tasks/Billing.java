@@ -30,186 +30,144 @@ public class Billing {
 		System.out.println("\n\t Billing Reports\t\n");
 		while(true){
 			System.out.println("\n\nSelect the required alternative\n"
-					+ "1. Enter information of the billing account\n" 
-					+ "2. Display itemized billing information \n" 
-					+ "3. Update information of billing account\n"
-					+ "4. Delete information of billing account\n" 
-					+ "5. Exit\n" 
+					+ "1. Enter information of the new payer Information \n" 
+					+ "2. Display all charges for a patient  \n" 
+					+ "3. Display itemized billing information for a patient\n"
+					+ "4. Update a payer's information\n" 
+					+ "5. Delete a payer's information"
+					+ "6. Exit\n" 
 					);
 			int input = reader.nextInt();
 			switch (input) {
 				case 1:			
 					System.out.println("Enter the payer SSN: ");
-					ssn = reader.nextInt();	
+					String ssn = reader.next();	
 					System.out.println("Enter the payment method: ");
-					method = reader.next();
+					String method = reader.next();
 					System.out.println("Enter the account number: ");
-					account_number = reader.nextInt();
+					String account_number = reader.next();
 					System.out.println("Enter the routing number: ");
-					routing_number = reader.nextInt();
+					String routing_number = reader.next();
 					System.out.println("Enter the card number: ");
-					card_number = reader.nextInt();
+					String card_number = reader.next();
 					System.out.println("Enter the expiry month: ");
-					expiry_month = reader.nextInt();
+					String expiry_month = reader.next();
 					System.out.println("Enter expiry year: ");
-					expiry_year = reader.next();
+					String expiry_year = reader.next();
 					System.out.println("Enter billing address: ");
-					address = reader.next();
-					System.out.print("Enter the patient ID you are paying for: ");
-					Integer toPay_pid = reader.nextInt();
-					str = "INSERT into billingAccount(payerSSN, payMethod, accountNumber, routingNumber, cardNumber, expiryMonth, expiryYear, address) values (?,?,?,?,?,?,?,?)";
-					str2 = "INSERT into paidBy(payerSSN, pId) values ( "+ ssn+","+toPay_pid +")";
-					try {
-						stmt = conn.prepareStatement(str);
-						stmt.setInt(1, ssn);
-						stmt.setString(2, method);
-						stmt.setInt(3,account_number);
-						stmt.setInt(4, routingNumber);
-						stmt.setInt(5,cardNumber);
-						stmt.setInt(6,expiry_month);
-						stmt.setInt(7,expiry_year);
-						stmt.setString(8,address);
-						action = stmt.executeUpdate();
-						executeTheQuery(str2);
-						if (action == 1)
-							System.out.println("Inserted succesfully");
-						action = 0;
-					} catch (SQLException e) {
-						e.printStackTrace();
-						System.out.println("Insert failed");
-					}
-					break;
-	
-					executeTheQuery(str);
+					String address = reader.next();
+					str = "INSERT into billingAccount VALUES (" + ssn + ", " + method + ", " + account_number + ", " + routing_number + ", " + card_number + ", " + expiry_month + ", " expiry_year + ", " + address + ");";
+					executeInsert(str);
+					System.out.print("Enter the Patient ID they are paying for: ");
+					String toPay_pid = reader.next();
+					str = "INSERT IGNORE into paidBy(payerSSN, pId) values ( "+ ssn+","+toPay_pid +")";
+					executeInsert(str);
 					break;
 
 				case 2:
-					System.out.println("Enter the ID of patient for the cumulative medical records: ");
-					int patient_id = reader.nextInt();
-					String required_MID = "";
-					stmt = "Select MID from hasRecords where PID = "+patient_id+";";
-					stmt = conn.prepareStatement(stmt);
-					ResultSet rs = stmt.executeQuery();
-					if(rs.next())
-						required_MID = rs.getString(1);
-
+					System.out.println("Enter the ID of patient to display all charges for : ");
+					String patient_id = reader.next();
+					str = "Select max(mId) from hasRecords where pId = "+patient_id+";";
+					int required_MID = getVariable(str);
 					
-					s = "SELECT MedicalRecord.endDate FROM MedicalRecord where MID = "+required_MID+";";
+					str = "SELECT MedicalRecord.endDate FROM MedicalRecord where MID = "+required_MID+";";
+					
 					int iVal = 0;
-					ResultSet rs = magicallyAppearingStmt.executeQuery(query);
+					rs = conn.executeQuery(str);
 					if (rs.next()) {
-    					iVal = rs.getInt("ID_PARENT");
     					if (rs.wasNull()) {
-									// handle NULL field value
-									stmt = "SELECT
-								sum(Tests.Tcost) AS 'Test Fees', Doctor.ConsultationFee AS 'Consultation Fees',  sum(
-								Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee'
-								FROM ( MedicalRecord 
-								-> INNER JOIN prescribesTests ON MedicalRecord.mId =
-								prescribesTests.mId
-								-> INNER JOIN prescribesDrugs ON MedicalRecord.mId =
-								prescribesDrugs.mId
-								-> INNER JOIN assigns ON MedicalRecord.mId = assigns.mId
-								-> INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId
-								-> INNER JOIN Tests ON prescribesTests.tId = Tests.tId
-								-> INNER JOIN consults ON MedicalRecord.mId = consults.mId
-								-> INNER JOIN Doctor ON consults.sId = Doctor.sID
-									)
-								WHERE MedicalRecord.mId = "+required_MID+";";
-							}
-							else{
-								stmt = "SELECT
-								Ward.wCost*DATEDIFF(MedicalRecord.enddate,MedicalRecord.startdate) AS 'Accomodation Fees',
-								sum(Tests.Tcost) AS 'Test Fees', Doctor.ConsultationFee AS 'Consultation Fees',  sum(
-								Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee'
-								FROM ( MedicalRecord 
-								-> INNER JOIN prescribesTests ON MedicalRecord.mId =
-								prescribesTests.mId
-								-> INNER JOIN prescribesDrugs ON MedicalRecord.mId =
-								prescribesDrugs.mId
-								-> INNER JOIN assigns ON MedicalRecord.mId = assigns.mId
-								-> INNER JOIN Ward ON assigns.wNumber = Ward.wNumber
-								-> INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId
-								-> INNER JOIN Tests ON prescribesTests.tId = Tests.tId
-								-> INNER JOIN consults ON MedicalRecord.mId = consults.mId
-								-> INNER JOIN Doctor ON consults.sId = Doctor.sID
-								)
-								WHERE MedicalRecord.mId = "+required_MID+";";
+							// handle NULL field value
+							System.out.println("The patient is not yet checked out and so does not have an")
+							str1 = "SELECT " 
+							+ "sum(Tests.Tcost) AS 'Test Fees', Doctor.ConsultationFee AS 'Consultation Fees',  sum("
+							+ "Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee' "
+							+ "FROM ( MedicalRecord " 
+							+ "INNER JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
+							+ "INNER JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
+							+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
+							+ "INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
+							+ "INNER JOIN Tests ON prescribesTests.tId = Tests.tId "
+							+ "INNER JOIN consults ON MedicalRecord.mId = consults.mId "
+							+ "INNER JOIN Doctor ON consults.sId = Doctor.sID ) "
+							+ "WHERE MedicalRecord.mId = "+required_MID+";";
+						}	
+						else{
+							str1 = "SELECT "
+							+ "Ward.wCost*DATEDIFF(MedicalRecord.enddate,MedicalRecord.startdate) AS 'Accomodation Fees', "
+							+ "sum(Tests.Tcost) AS 'Test Fees', Doctor.ConsultationFee AS 'Consultation Fees',  sum("
+							+ "Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee' "
+							+ "FROM ( MedicalRecord "
+							+ "INNER JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
+							+ "INNER JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
+							+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
+							+ "INNER JOIN Ward ON assigns.wNumber = Ward.wNumber "
+							+ "INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
+							+ "INNER JOIN Tests ON prescribesTests.tId = Tests.tId "
+							+ "INNER JOIN consults ON MedicalRecord.mId = consults.mId "
+							+ "INNER JOIN Doctor ON consults.sId = Doctor.sID ) "
+							+ "WHERE MedicalRecord.mId = " + required_MID + ";";
 
-							}
+						}
 					}
-				
+					
+					executeTheQuery(str1);
 					break;
 
 				case 3:
-					System.out.println("Enter the ID of patient for generating itemized billing information: ");
-					int patient_id = reader.nextInt();
-					String required_MID = "";
-					stmt = "Select MID from hasRecords where PID = "+patient_id;
-					stmt = conn.prepareStatement(stmt);
-					ResultSet rs = stmt.executeQuery();
-					if(rs.next())
-						required_MID = rs.getString(1);
+					System.out.println("Enter the ID of patient to generate itemized bills for: ");
+					String patient_id = reader.next();
+					str = "Select MAX(mId) from hasRecords where PID = "+patient_id +";";
+					String required_MID = getVariable(str);
+					
 					//tests charge
-					System.out.println("Billing Information for Tests: ");
-					stmt = "SELECT Tests.TID, Tests.TName,Tests.Tcost AS 'Test Fees'
-					FROM ( MedicalRecord 
-					-> INNER JOIN prescribesTests ON MedicalRecord.mId =
-					prescribesTests.mId
-					-> INNER JOIN assigns ON MedicalRecord.mId = assigns.mId
-					-> INNER JOIN Tests ON prescribesTests.tId = Tests.tId
-					)
-					WHERE MedicalRecord.mId = "+required_MID+";";
-					executeTheQuery(stmt);
+					System.out.println("Tests bill: ");
+					str = "SELECT Tests.TID, Tests.TName,Tests.Tcost AS 'Test Fees' "
+					+ "FROM ( MedicalRecord "
+					+ "INNER JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
+					+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
+					+ "INNER JOIN Tests ON prescribesTests.tId = Tests.tId ) "
+					+ "WHERE MedicalRecord.mId = "+required_MID+";";
+					executeTheQuery(str);
+
 					//drugs charge
-					System.out.println("Billing Information for Drugs:")
-					stmt = "SELECT Drugs.DrugID, Drugs.DrugName, Drugs.DrugCost
-					FROM ( MedicalRecord
-					-> INNER JOIN prescribesDrugs ON MedicalRecord.mId =
-					prescribesDrugs.mId
-					-> INNER JOIN assigns ON MedicalRecord.mId = assigns.mId
-					-> INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId
-					)
-					WHERE MedicalRecord.mId = "+required_MID+";";
-					executeTheQuery(stmt);
+					System.out.println("Drugs bill:")
+					str = "SELECT Drugs.DrugID, Drugs.DrugName, Drugs.DrugCost "
+					+ "FROM ( MedicalRecord "
+					+ "INNER JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
+					+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId " 
+					+ "INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId ) "
+					+ "WHERE MedicalRecord.mId = "+required_MID+";";
+					executeTheQuery(str);
 
 					//registration charge
-					System.out.println("Registration fees information ");
-					stmt =  "SELECT  MedicalRecord.regFee AS 'Registration Fee'
-					FROM ( MedicalRecord
-					-> INNER JOIN assigns ON MedicalRecord.mId = assigns.mId
-					-> INNER JOIN consults ON MedicalRecord.mId = consults.mId
-					-> INNER JOIN Doctor ON consults.sId = Doctor.sID
-					)
-					WHERE MedicalRecord.mId = "+required_MID + ";";
-					executeTheQuery(stmt);
+					System.out.println("Registration fees information :);
+					str =  "SELECT  regFee AS 'Registration Fee' "
+					+ "FROM ( MedicalRecord "
+					+ "WHERE mId = "+required_MID + ";";
+					executeTheQuery(str);
+
 					//doctor consulation fee
-					System.out.println("Doctor's Consultation fee for the patient");
-					stmt = "SELECT Doctor.ConsultationFee AS 'Consultation Fees
-					FROM ( MedicalRecord 
-					-> INNER JOIN assigns ON MedicalRecord.mId = assigns.mId
-					-> INNER JOIN consults ON MedicalRecord.mId = consults.mId
-					-> INNER JOIN Doctor ON consults.sId = Doctor.sID
-					)
-					WHERE MedicalRecord.mId = "+required_MID + ";";
-					executeTheQuery(stmt);
+					System.out.println("Doctor's Consultation fee for the patient :");
+					str = "SELECT Staff.ConsultationFee AS 'Consultation Fees "
+					+ "FROM ( MedicalRecord "
+					+ "INNER JOIN consults ON MedicalRecord.mId = consults.mId "
+					+ "INNER JOIN Doctor ON consults.sId = Staff.sId ) "
+					+ "WHERE MedicalRecord.mId = "+required_MID + ";";
+					executeTheQuery(str);
 
 					//ward charge if checked out -> end date is not NULL
-					System.out.println("Ward fees for the patient");
-					stmt = "SELECT
-					Ward.wCost*DATEDIFF(CheckInInfo.enddate,CheckInInfo.startdate) AS 'Accomodation Fees'
-					-> INNER JOIN assigns ON MedicalRecord.mId = assigns.mId
-					-> INNER JOIN Ward ON assigns.wNumber = Ward.wNumber
-					-> WHERE MedicalRecord.mId = 1 AND CheckInInfo.enddate IS NOT NULL
-					)
-					WHERE MedicalRecord.mId = "+required_MID+";";
-					executeTheQuery(stmt);
-
+					System.out.println("Accomodation fees for the patient (if checked out) : ");
+					str = "SELECT "
+					+ "Ward.wCost*DATEDIFF(CheckInInfo.enddate,CheckInInfo.startdate) AS 'Accomodation Fees' "
+					+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
+					+ "INNER JOIN Ward ON assigns.wNumber = Ward.wNumber "
+					+ "WHERE MedicalRecord.mId = "+required_MID+" AND CheckInInfo.enddate IS NOT NULL);";
+					executeTheQuery(str);
 					break;	
 
 				case 4:	
-					System.out.println("Enter the payer SSN: ");
-					ssn = reader.nextInt();	
+					System.out.println("Enter the payer SSN to be updated: ");
+					String ssn = reader.next();	
 					System.out.println("Enter the payment method: ");
 					String method = reader.next();
 					System.out.println("Enter the account number: ");
@@ -225,37 +183,21 @@ public class Billing {
 					System.out.println("Enter billing address: ");
 					String address = reader.next();
 
-					stmt = "UPDATE billingAccount SET payerSSN = "+ ssn + ", payMethod = "+ method + ", accountNumber = "+account_number+", routingNumber = "+routing_number+", cardNumber = "+card_number+", expiryMonth = "+expiry_month+", expiryYear = "+expiry_month+", address = "+address+" where payerSSN = "+ssn+";";
-					try {
-						stmt = conn.prepareStatement(stmt);
-						action = stmt.executeUpdate();
-						if (action == 1)
-							System.out.println("Updated succesfully");
-						action = 0;
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}	
+					str = "UPDATE billingAccount SET payerSSN = "+ ssn + ", payMethod = "+ method + ", accountNumber = "+account_number+", routingNumber = "+routing_number+", cardNumber = "+card_number+", expiryMonth = "+expiry_month+", expiryYear = "+expiry_month+", address = "+address+" where payerSSN = "+ssn+";";
+					executeUpdate(str);	
 					break;
 
 				case 5:
-					System.out.println("Enter the Payer's SSN to be deleted");
-					Integer ssn = reader.nextInt();
-					stmt = "DELETE from billingAccount where payerSSN = "+ssn+";";
-					try {
-						stmt = conn.prepareStatement(stmt);
-						action = stmt.executeUpdate();
-						if (action == 1)
-							System.out.println("Deleted successfully");
-						action = 0;
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
+					System.out.println("Enter the Payer's SSN to be deleted : ");
+					String ssn = reader.next();
+					str = "DELETE from billingAccount where payerSSN = "+ssn+";";
+					executeDelete(str);
 					break;
 
-				case 6:
-					sSystem.out.println("Exiting the system");
-					break;
+				case 6: return;
+				
 				default:
+					System.out.println("Please select a valid option");
 					break;
 		
 				}
@@ -286,6 +228,21 @@ public class Billing {
     		}
 	}
 
+	public int getVariable(String str){
+		try {
+			int x;
+			stmt = conn.prepareStatement(str);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				x = rs.getInt(1);
+			}
+			return x;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed! Retry.");
+		}
+	}	
+
 	public void executeTheQuery(String str){
 		try {
 			stmt = conn.prepareStatement(str);
@@ -296,32 +253,40 @@ public class Billing {
 			System.out.println("Failed! Retry.");
 		}
 	}
-
-	// closing the connection, statement and result set
-	static void close(Connection conn) {
-		if (conn != null) {
-			try{
-				conn.close();
-			} catch (Throwable whatever) {
-			}
+	
+		public void executeInsert(String str){
+		try {
+			stmt = conn.prepareStatement(str);
+			int out = stmt.executeUpdate();
+			if (action == 1)
+				System.out.println("Inserted Successfully");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed! Retry.");
 		}
-	}
+	}	
 
-	static void close(Statement st) {
-		if (st != null) {
-			try {
-				st.close();
-			} catch (Throwable whatever) {
-			}
+	public void executeDelete (String str){
+		try {
+			stmt = conn.prepareStatement(str);
+			int out = stmt.executeUpdate();
+			if (action == 1)
+				System.out.println("Deleted Successfully");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed! Retry.");
 		}
-	}
+	}	
 
-	static void close(ResultSet rs) {
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (Throwable whatever) {
-			}
+	public void executeUpdate (String str){
+		try {
+			stmt = conn.prepareStatement(str);
+			int out = stmt.executeUpdate();
+			if (action == 1)
+				System.out.println("Updated Successfully");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed! Retry.");
 		}
 	}
 }
