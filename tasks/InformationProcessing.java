@@ -73,8 +73,8 @@ public class InformationProcessing {
 					String paddr = reader.next();
 
 					str = "INSERT INTO `Patient`"
-					+ "VALUES ( " + pid + " , "+ pname + ", "+ pssn +", '"+pdob +"', "
-					+ pgender + ", "+ pphone +", " + paddr + ");";
+					+ "VALUES ( " + pid + " , '"+ pname + "', '"+ pssn +"', '"+pdob +"', '"
+					+ pgender + "', "+ pphone +", '" + paddr + "'');";
 	
 					executeInsert(str);
 					break;
@@ -96,8 +96,8 @@ public class InformationProcessing {
 					String paddr = reader.next();
 
 					str = "UPDATE Patient SET pName = "  + pname 
-					+ ", SSN = " + pssn +", DOB = '"+pdob +"', pGender = "  + pgender
-					+ ", pPhone = "+ pphone +", pAddres = " + paddr + " where pId = " + pid + ";";
+					+ ", SSN = '" + pssn +"', DOB = '"+pdob +"', pGender = '"  + pgender
+					+ "', pPhone = "+ pphone +", pAddres = '" + paddr + "' where pId = " + pid + ";";
 	
 					executeUpdate(str);
 					break;
@@ -138,15 +138,15 @@ public class InformationProcessing {
 		                    System.out.println("Enter consultation fee");
 		                    String fee = reader.next();
 		                	str = "INSERT INTO `Staff`"
-		                    + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
-		                    + sphone + ", "+ saddress +", " + fee + ");";
+		                    + "VALUES ( " + sid+" , '"+ sname + "', '"+ jtitle +"', '"+ptitle+"', "
+		                    + sphone + ", '"+ saddress +"', " + fee + ");";
 		                	break;
 		                }
                     	case 2:
                     	case 3:
                     	case 4: {
                     		str = "INSERT INTO Staff"
-			                + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
+			                + "VALUES ( " + sid+" , '"+ sname + "', '"+ jtitle +"', '"+ptitle+"', "
 			                + sphone + ", "+ saddress +", NULL);";               
 	               			break;
 	               		}
@@ -351,7 +351,7 @@ public class InformationProcessing {
 						System.out.println("Enter check out date (YYYY-MM-DD): ");
 						String enddate = reader.next();
 
-						str = "UPDATE MedicalRecord SET enddate = '" + enddate +"' where mId = " + mid + " AND enddate IS NULL";		
+						str = "UPDATE MedicalRecord SET enddate = '" + enddate +"', inWard = 'N', compTreatment = 'Y' where mId = " + mid + " AND enddate IS NULL";		
 						executeUpdate(str);
 
 						str = "SELECT wNumber FROM assigns where mId = " + mid +";";
@@ -415,12 +415,12 @@ public class InformationProcessing {
 					String did = reader.next();
 					
 					
-					str = "INSERT INTO Tests"
+					str = "INSERT INTO Tests "
 					+ "VALUES ( " + tid + " , "+ tname + ", "+ tcost +");";
 	
 					executeInsert(str);
 
-					str = "INSERT IGNORE INTO doneBy"
+					str = "INSERT IGNORE INTO doneBy "
 					+ "VALUES ( " + tid + " , "+ did +");";
 						executeInsert(str);
 					break;
@@ -554,27 +554,15 @@ public class InformationProcessing {
 	}
 
 	public void executeInsert(String str){
-		try {	
-			conn.setAutoCommit(false);
+		try {
 			stmt = conn.prepareStatement(str);
 			int out = stmt.executeUpdate();
 			if (out == 1)
 				System.out.println("Inserted Successfully");
-		} catch (SQLException e) {	
-			if (conn != null) {
-				try {
-					System.out.println("There is some issue with inserting details");
-					//rolling back in case of any error
-					conn.rollback();
-					//and then auto committing it
-					conn.setAutoCommit(true);
-					return;
-				} catch (SQLException e1) {
-					e.printStackTrace();
-					System.out.println("Failed! Retry.");
-				}
-			}
-		}	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed! Retry.");
+		}
 	}	
 
 	public void executeDelete (String str){
