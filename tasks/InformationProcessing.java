@@ -56,9 +56,9 @@ public class InformationProcessing {
 			int input = reader.nextInt();
 			switch (input) {
 
-				case 1:			
+				case 1:{			
 					System.out.println("Enter the Patient ID : ");
-					int pid = reader.nextInt();
+					String pid = reader.next();
 					System.out.println("Enter the Patient Name : ");
 					String pname = reader.next();
 					System.out.println("Enter the Patient SSN : ");
@@ -78,10 +78,10 @@ public class InformationProcessing {
 	
 					executeInsert(str);
 					break;
-
-				case 2:
+				}
+				case 2: {
 					System.out.println("Enter the Patient ID to update: ");
-					int pid = reader.nextInt();
+					String pid = reader.next();
 					System.out.println("Enter the Patient Name : ");
 					String pname = reader.next();
 					System.out.println("Enter the Patient SSN : ");
@@ -101,9 +101,9 @@ public class InformationProcessing {
 	
 					executeUpdate(str);
 					break;
+				}
 
-
-				case 3:
+				case 3: {
 					System.out.println("Enter the Patient ID to delete: ");
 					int pid = reader.nextInt();
 					
@@ -111,9 +111,9 @@ public class InformationProcessing {
 
 					executeDelete(str);
 					break;	
+				}
 
-				case 4: 
-                
+				case 4: {                
                     System.out.println("Enter Staff ID");
                     String sid = reader.next();
                     System.out.println("Enter Staff name");
@@ -126,39 +126,39 @@ public class InformationProcessing {
                     String saddress = reader.next();
                     
                     System.out.println("Choose the Job Title: \n\t1. Doctor\n\t. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
-                    String jtitle = reader.next();
+                    int jtitle = reader.nextInt();
                     switch(jtitle){
-                    	case 1: 
-		                	System.out.println("Enter Consultation Fee");
-		                	String fee = reader.next();
+                    	case 1: {
 		                	str = "SELECT * FROM Department;";
 		                	executeTheQuery(str);	
 		                  	System.out.println("\nEnter Department ID");
-		                    did = reader.next();
-		                    str1 = "INSERT INTO belongsTo VALUES(" + sid +", " +did+");";
-		                    executeInsert(str1);
+		                    String did = reader.next();
+		                    str = "INSERT IGNORE INTO belongsTo VALUES(" + sid +", " +did+");";
+		                    executeInsert(str);
 		                    System.out.println("Enter consultation fee");
-		                    fee = reader.next();
-		                    str = "INSERT INTO `Staff`"
+		                    String fee = reader.next();
+		                	str = "INSERT INTO `Staff`"
 		                    + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
 		                    + sphone + ", "+ saddress +", " + fee + ");";
 		                	break;
-
+		                }
                     	case 2:
                     	case 3:
-                    	case 4:
+                    	case 4: {
                     		str = "INSERT INTO Staff"
 			                + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
-			                + sphone + ", "+ saddress +", NULL);";                   
+			                + sphone + ", "+ saddress +", NULL);";               
 	               			break;
+	               		}
                     	
                     	default: System.out.println("Please select a valid option");
 							break;
                     }  
                     executeInsert(str);
                     break;
+                }
 
-                case 5:
+                case 5:{
                     System.out.println("Enter staff ID");
                     String sid = reader.next();
                     System.out.println("Enter staff name");
@@ -171,7 +171,7 @@ public class InformationProcessing {
                     String saddress = reader.next();
                     
                     System.out.println("Choose the Job Title: \n\t1. Doctor\n\t. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
-                    String jtitle = reader.next();
+                    int jtitle = reader.nextInt();
                     switch(jtitle){
                     	case 1: 
                     	System.out.println("Enter consultation fee");
@@ -195,8 +195,9 @@ public class InformationProcessing {
                     
                     executeUpdate(str);
                     break;
+                }
 
-                case 6:
+                case 6: {
                     System.out.println("Enter the Staff ID to delete: ");
                     int sid = reader.nextInt();
                     
@@ -204,8 +205,9 @@ public class InformationProcessing {
 
                     executeDelete(str);
                     break;  
+                }
 
-				case 7:
+				case 7: {
 					System.out.println("Enter the Ward Number : ");
 					String wnumber = reader.next();
 					System.out.println("Enter the capacity : ");
@@ -224,8 +226,9 @@ public class InformationProcessing {
 					executeInsert(str);
 
 					break;
+				}
 
-				case 8:
+				case 8: {
 					System.out.println("Enter the Ward Number to update: ");
 					String wnumber = reader.next();
 					System.out.println("Enter the capacity : ");
@@ -241,24 +244,23 @@ public class InformationProcessing {
 					str = "Update inChargeOf SET sId = " + sid + " WHERE wNumber = "+ wnumber +";";
 					executeInsert(str);
 					break;
+				}
 
-				case 9:
+				case 9: {
 					System.out.println("Enter the Ward Number to delete: ");
-					
+					String wnumber = reader.next();
 					str = "DELETE FROM Ward WHERE wNumber = " + wnumber + ";";
 					executeDelete(str);
 
 					str = "DELETE FROM inChargeOf WHERE wNumber = " + wnumber + ";";
 					executeDelete(str);
 					break;
+				}
 		
-				case 10:
+				case 10: {
 					str = "SELECT sum(avail) FROM Ward;";
 					int avail = getVariable(str);
-					if(avail == null){
-							System.out.println("Could not retrieve some information");
-							break;
-					}
+					
 					if(avail <= 0){
 						System.out.println("Hospital full. Cannot admit patient.");
 						break;
@@ -270,7 +272,7 @@ public class InformationProcessing {
 					int pid = reader.nextInt();
 							
 					switch (input1) {
-						case 1:
+						case 1:{
 							System.out.println("Enter the Patient Name : ");
 							String pname = reader.next();
 							System.out.println("Enter the Patient SSN : ");
@@ -289,23 +291,15 @@ public class InformationProcessing {
 							+ pgender + ", "+ pphone +", " + paddr + ");";
 			
 							executeInsert(str);
+						}
 
-						default:		
+						default: {		
 							str = " SELECT MAX(mId) FROM MedicalRecord;";
 							int mid = getVariable(str);
-							if(mid == null){
-								System.out.println("Could not retrieve some information");
-								break;
-							}
+							
 
 							System.out.println("Enter check in date (YYYY-MM-DD): ");
 							String startdate = reader.next();
-
-							//str = "INSERT INTO CheckInInfo VALUES(" + (cid + 1) + ", '" + startdate +"', null);";
-							//executeInsert(str);
-							
-							//str = "INSERT INTO checksInWith VALUES(" + (cid + 1) + ", " + pid +");";
-							//executeInsert(str);
 
 							System.out.println("Enter the diagnosis details : ");
 							String dd = reader.next();
@@ -317,9 +311,6 @@ public class InformationProcessing {
 							str = "INSERT INTO MedicalRecord VALUES(" + (mid+1) + ", " + startdate +"', null " + dd +", "
 							+ regfee +", " + ptp + ", Y, N);"; 
 							executeInsert(str);
-
-							//str = "INSERT INTO addedTo VALUES(" +(mid + 1)+", "+ (cid+1) + ");";
-							//executeInsert(str);
 
 							str = "INSERT IGNORE INTO hasRecord VALUES(" +(mid + 1)+", "+ pid + ");";
 							executeInsert(str);
@@ -344,20 +335,19 @@ public class InformationProcessing {
 							executeUpdate(str);
 
 							break;
-							}
+						}
+					}	
 
 					break;
+				}
 		
-				case 11:
+				case 11: {
 						System.out.println("Enter the Patient ID to check out: ");
 						int pid = reader.nextInt();
 						str = "SELECT MAX(mId) FROM hasRecord WHERE pid = " + pid + ";";
 
 						int mid = getVariable(str);
-						if(mid == null){
-							System.out.println("Could not retrieve some information");
-							break;
-						}
+						
 						System.out.println("Enter check out date (YYYY-MM-DD): ");
 						String enddate = reader.next();
 
@@ -366,15 +356,13 @@ public class InformationProcessing {
 
 						str = "SELECT wNumber FROM assigns where mId = " + mid +";";
 						int wnumber = getVariable(str);
-						if(wnumber == null){
-							System.out.println("Could not retrieve some information");
-							break;
-						}
+						
 						str = "UPDATE Ward SET avail = avail + 1 WHERE wNumber = " + wnumber + " AND avail < type;";
 						executeUpdate(str);
 						break;
+				}
 
-				case 12:			
+				case 12: {		
 					System.out.println("Enter the Drug ID : ");
 					int drugid = reader.nextInt();
 					System.out.println("Enter the Drug Name : ");
@@ -387,8 +375,9 @@ public class InformationProcessing {
 	
 					executeInsert(str);
 					break;
+				}
 
-				case 13:
+				case 13:{
 					System.out.println("Enter the Drug ID : ");
 					int drugid = reader.nextInt();
 					System.out.println("Enter the Drug Name : ");
@@ -399,9 +388,9 @@ public class InformationProcessing {
 					str = "UPDATE Drugs SET drugName = "+ drugname + ", drugCost = "+ drugcost +" where drugId = " + drugid +";";
 					executeUpdate(str);
 					break;
+				}
 
-
-				case 14:
+				case 14: {
 					System.out.println("Enter the Drug ID to delete: ");
 					int drugid = reader.nextInt();
 					
@@ -409,8 +398,9 @@ public class InformationProcessing {
 
 					executeDelete(str);
 					break;	
+				}
 
-				case 15:	
+				case 15: {	
 					System.out.println("Enter the Test ID : ");
 					int tid = reader.nextInt();
 					System.out.println("Enter the Test Name : ");
@@ -434,8 +424,9 @@ public class InformationProcessing {
 					+ "VALUES ( " + tid + " , "+ did +");";
 						executeInsert(str);
 					break;
+				}
 
-				case 16:
+				case 16: {
 					System.out.println("Enter the Test ID : ");
 					int tid = reader.nextInt();
 					System.out.println("Enter the Test Name : ");
@@ -446,8 +437,9 @@ public class InformationProcessing {
 					str = "UPDATE Tests SET tName = "+ tname + ", tCost = "+ tcost +" where tId = " + tid +";";
 					executeUpdate(str);
 					break;
+				}
 
-				case 17:
+				case 17: {
 					System.out.println("Enter the Test ID to delete: ");
 					int tid = reader.nextInt();
 					
@@ -455,9 +447,10 @@ public class InformationProcessing {
 
 					executeDelete(str);
 					break;	
+				}
 
 
-				case 18:
+				case 18: {
 					System.out.println("Enter the Department ID : ");
 					int did = reader.nextInt();
 					System.out.println("Enter the Department Name : ");
@@ -467,8 +460,9 @@ public class InformationProcessing {
 					+ "VALUES ( " + did + " , "+ dname +");";
 					executeInsert(str);
 					break;
+				}
 
-				case 19:
+				case 19: {
 					System.out.println("Enter the Department ID : ");
 					int did = reader.nextInt();
 					System.out.println("Enter the Department Name : ");
@@ -477,24 +471,28 @@ public class InformationProcessing {
 					str = "UPDATE Ward SET deptName = "+ dname + " WHERE deptId = " + did + ";";
 					executeUpdate(str);
 					break;
+				}
 		
-				case 20:
+				case 20: {
 					System.out.println("Enter the Department ID to delete: ");
+					int did = reader.nextInt();
 					
 					str = "DELETE FROM Department WHERE deptId = " + did + ";";
 					executeDelete(str);
 					break;
+				}
 
-				case 21: 
+				case 21: {
 					System.out.println("Enter PID to display information about");
 					int pid = reader.nextInt();
 
 					System.out.println("All Medical Records of the Patient: \n");
 					
-					str = "SELECT * FROM MedicalRecord, hasRecord WHERE hasRecord.pId = " + pId
+					str = "SELECT * FROM MedicalRecord, hasRecord WHERE hasRecord.pId = " + pid
 					+ " ORDER BY MedicalRecord.startdate DESC;";
 					executeTheQuery(str);
 					break;
+				}
 					
 				case 22: return;
 				
@@ -507,8 +505,8 @@ public class InformationProcessing {
 	}
 
 	public int getVariable(String str){
+		int x = 0;
 		try {
-			int x;
 			stmt = conn.prepareStatement(str);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -519,7 +517,8 @@ public class InformationProcessing {
 			e.printStackTrace();
 			System.out.println("Failed! Retry.");
 		}
-	}	
+		return x;
+	}
 
 	public void printOutput(ResultSet rs)throws SQLException {
 
@@ -555,33 +554,22 @@ public class InformationProcessing {
 	}
 
 	public void executeInsert(String str){
-		try {	
-			conn.setAutoCommit(false);
+		try {
 			stmt = conn.prepareStatement(str);
 			int out = stmt.executeUpdate();
-			if (action == 1)
+			if (out == 1)
 				System.out.println("Inserted Successfully");
-		} catch (SQLException e) { 
-			if (conn != null) {
-				try {
-					System.out.println("there is some issue with details inserted");
-					//rolling back in case of any error
-					conn.rollback();
-					//and then auto committing it
-					conn.setAutoCommit(true);
-					return;
-				} catch (SQLException e1) {
-					e.printStackTrace();
-					System.out.println("Failed! Retry.");
-				}
-			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed! Retry.");
 		}
-		
+	}	
+
 	public void executeDelete (String str){
 		try {
 			stmt = conn.prepareStatement(str);
 			int out = stmt.executeUpdate();
-			if (action == 1)
+			if (out == 1)
 				System.out.println("Deleted Successfully");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -593,11 +581,38 @@ public class InformationProcessing {
 		try {
 			stmt = conn.prepareStatement(str);
 			int out = stmt.executeUpdate();
-			if (action == 1)
+			if (out == 1)
 				System.out.println("Updated Successfully");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Failed! Retry.");
+		}
+	}
+
+	static void close(Connection conn) {
+		if (conn != null) {
+			try{
+				conn.close();
+			} catch (Throwable whatever) {
+			}
+		}
+	}
+
+	static void close(Statement st) {
+		if (st != null) {
+			try {
+				st.close();
+			} catch (Throwable whatever) {
+			}
+		}
+	}
+
+	static void close(ResultSet rs) {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (Throwable whatever) {
+			}
 		}
 	}	
 }

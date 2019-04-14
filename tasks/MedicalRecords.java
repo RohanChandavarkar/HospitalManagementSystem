@@ -7,6 +7,7 @@ public class MedicalRecords{
 	static PreparedStatement stmt;
 	static ResultSet rs;
 	String str;
+	static Scanner reader = new Scanner(System.in);
 
 	public MedicalRecords(Connection conn) {
 		try {
@@ -16,18 +17,21 @@ public class MedicalRecords{
 		}
 	}
 
+	public void close() {
+		// closes the connection, statement and result set.
+		close(rs);
+		close(stmt);
+		close(conn);
+	}
+
 	public void menu(){
-		while (True){
+		while (true){
 			System.out.println("Updating Medical Records\n");
 			System.out.println("Enter patient ID:");
 			String pid = reader.next();
 			str = "SELECT MAX(mId) from hasRecord where pId = "+pid+";";
 			int v = getVariable(str);
-			if(v == null){
-				System.out.println("Could not retrieve some information");
-				break;
-			}
-
+			
 			str = "SELECT enddate from MedicalRecord where mId= " + v + ";";
 			try{
 				stmt = conn.prepareStatement(str);
@@ -38,34 +42,35 @@ public class MedicalRecords{
 				}
 				else{
 					System.out.println("\t1. Update Treatment in MedicalRecord\n\t2. Update Tests in MedicalRecord\n\t3. Update Drugs in MedicalRecord\n\t4. Exit");
-					Scanner reader = new Scanner(System.in);
 					int input = reader.nextInt();
 
 					switch(input){
-						case 1:
+						case 1:{
 							System.out.println("Select the Treatment plan value");
-							int tpt = reader.next();
+							String tpt = reader.next();
 
 							str = "Update MedicalRecord set proTreatPlan=" + tpt + "where mId=" + v+";";
 							executeUpdate(str);
 							break;
+						}
 
-						case 2: 
+						case 2: {
 							System.out.println("Enter Test Id to update");
-							int tpt = reader.next();
+							String tpt = reader.next();
 							str = "insert into prescribesTests VALUES("+v+","+tpt+");";
 
 							executeInsert(str);
 							break;
+						}
 
-						case 3:
+						case 3:{
 							System.out.println("Enter Test Id to update");
-							int tpt = reader.next();
+							String tpt = reader.next();
 							str = "insert into prescribesDrugs VALUES("+v+","+tpt+");";
 
 							executeInsert(str);
 							break;
-
+						}
 						case 4:
 							return;
 
@@ -93,6 +98,27 @@ public class MedicalRecords{
 			}
 	}
 
+	public void printOutput(ResultSet rs)throws SQLException {
+
+		// Prepare metadata object and get the number of columns.
+    		ResultSetMetaData rsmd = rs.getMetaData();
+    		int columnsNumber = rsmd.getColumnCount();
+		System.out.println();
+    		// Print column names (a header).
+    		for (int i = 1; i <= columnsNumber; i++) {
+        		if (i > 1) System.out.print("\t|\t");
+        		System.out.print(rsmd.getColumnName(i));
+    		}
+		System.out.println("");
+
+    		while (rs.next()) {
+        		for (int i = 1; i <= columnsNumber; i++) {
+            			if (i > 1) System.out.print("\t|\t");
+            			System.out.print(rs.getString(i));
+        		}
+        		System.out.println("");
+    		}
+	}
 
 	public void executeInsert(String str){
 	        try {
@@ -119,8 +145,8 @@ public class MedicalRecords{
     }   
 
 	public int getVariable(String str){
+		int x = 0;
 		try {
-			int x;
 			stmt = conn.prepareStatement(str);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -130,6 +156,34 @@ public class MedicalRecords{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Failed! Retry.");
+		}
+		return x;
+	}
+
+	static void close(Connection conn) {
+		if (conn != null) {
+			try{
+				conn.close();
+			} catch (Throwable whatever) {
+			}
+		}
+	}
+
+	static void close(Statement st) {
+		if (st != null) {
+			try {
+				st.close();
+			} catch (Throwable whatever) {
+			}
+		}
+	}
+
+	static void close(ResultSet rs) {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (Throwable whatever) {
+			}
 		}
 	}
 
