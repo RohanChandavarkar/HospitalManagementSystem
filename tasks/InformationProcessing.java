@@ -555,17 +555,28 @@ public class InformationProcessing {
 	}
 
 	public void executeInsert(String str){
-		try {
+		try {	
+			conn.setAutoCommit(false);
 			stmt = conn.prepareStatement(str);
 			int out = stmt.executeUpdate();
 			if (action == 1)
 				System.out.println("Inserted Successfully");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("Failed! Retry.");
+		} catch (SQLException e) { 
+			if (conn != null) {
+				try {
+					System.out.println("there is some issue with details inserted");
+					//rolling back in case of any error
+					conn.rollback();
+					//and then auto committing it
+					conn.setAutoCommit(true);
+					return;
+				} catch (SQLException e1) {
+					e.printStackTrace();
+					System.out.println("Failed! Retry.");
+				}
+			}
 		}
-	}	
-
+		
 	public void executeDelete (String str){
 		try {
 			stmt = conn.prepareStatement(str);
