@@ -288,10 +288,10 @@ public class Billing {
 		} catch (SQLException e) {	
 			if (conn != null) {
 				try {
-					System.out.println("there is issue setting presidential room dedicated staff");
-					//rolling back in case of any error
+					System.out.println("There is some updating issue ");
+					//Rolling back in case of any error
 					conn.rollback();
-					//and then auto committing it
+					//And then auto committing it
 					conn.setAutoCommit(true);
 					return;
 				}catch (SQLException e)	{	
