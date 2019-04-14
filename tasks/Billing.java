@@ -32,7 +32,7 @@ public class Billing {
 					+ "2. Display all charges for a patient  \n" 
 					+ "3. Display itemized billing information for a patient\n"
 					+ "4. Update a payer's information\n" 
-					+ "5. Delete a payer's information"
+					+ "5. Delete a payer's information\n"
 					+ "6. Exit\n" 
 					);
 			int input = reader.nextInt();
@@ -69,7 +69,7 @@ public class Billing {
 				case 2:{
 					System.out.println("Enter the ID of patient to display all charges for : ");
 					String patient_id = reader.next();
-					str = "Select max(mId) from hasRecords where pId = "+patient_id+";";
+					str = "Select max(mId) from hasRecord where pId = "+patient_id+";";
 					int required_MID = getVariable(str);
 					
 					str = "SELECT MedicalRecord.endDate FROM MedicalRecord where MID = "+required_MID+";";
@@ -80,7 +80,7 @@ public class Billing {
 						// handle NULL field value
 						System.out.println("The patient is not yet checked out and so does not have any accomodation fee");
 						str1 = "SELECT " 
-						+ "sum(Tests.Tcost) AS 'Test Fees', Doctor.ConsultationFee AS 'Consultation Fees',  sum("
+						+ "sum(Tests.Tcost) AS 'Test Fees', Staff.ConsultationFee AS 'Consultation Fees',  sum("
 						+ "Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee' "
 						+ "FROM ( MedicalRecord " 
 						+ "INNER JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
@@ -89,13 +89,13 @@ public class Billing {
 						+ "INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
 						+ "INNER JOIN Tests ON prescribesTests.tId = Tests.tId "
 						+ "INNER JOIN consults ON MedicalRecord.mId = consults.mId "
-						+ "INNER JOIN Doctor ON consults.sId = Doctor.sID ) "
+						+ "INNER JOIN Staff ON consults.sId = Staff.sID ) "
 						+ "WHERE MedicalRecord.mId = "+required_MID+";";
 					}	
 					else{
 						str1 = "SELECT "
 						+ "Ward.wCost*DATEDIFF(MedicalRecord.enddate,MedicalRecord.startdate) AS 'Accomodation Fees', "
-						+ "sum(Tests.Tcost) AS 'Test Fees', Doctor.ConsultationFee AS 'Consultation Fees',  sum("
+						+ "sum(Tests.Tcost) AS 'Test Fees', Staff.ConsultationFee AS 'Consultation Fees',  sum("
 						+ "Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee' "
 						+ "FROM ( MedicalRecord "
 						+ "INNER JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
@@ -105,7 +105,7 @@ public class Billing {
 						+ "INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
 						+ "INNER JOIN Tests ON prescribesTests.tId = Tests.tId "
 						+ "INNER JOIN consults ON MedicalRecord.mId = consults.mId "
-						+ "INNER JOIN Doctor ON consults.sId = Doctor.sID ) "
+						+ "INNER JOIN Staff ON consults.sId = Staff.sID ) "
 						+ "WHERE MedicalRecord.mId = " + required_MID + ";";
 
 					}
@@ -117,7 +117,7 @@ public class Billing {
 				case 3: {
 					System.out.println("Enter the ID of patient to generate itemized bills for: ");
 					String patient_id = reader.next();
-					str = "Select MAX(mId) from hasRecords where PID = "+patient_id +";";
+					str = "Select MAX(mId) from hasRecord where PID = "+patient_id +";";
 					int required_MID = getVariable(str);
 					
 					//tests charge
@@ -143,26 +143,26 @@ public class Billing {
 					//registration charge
 					System.out.println("Registration fees information :");
 					str =  "SELECT  regFee AS 'Registration Fee' "
-					+ "FROM ( MedicalRecord "
+					+ "FROM MedicalRecord "
 					+ "WHERE mId = "+ required_MID + ";";
 					executeTheQuery(str);
 
 					//doctor consulation fee
 					System.out.println("Doctor's Consultation fee for the patient :");
-					str = "SELECT Staff.ConsultationFee AS 'Consultation Fees "
+					str = "SELECT Staff.ConsultationFee AS 'Consultation Fees' "
 					+ "FROM ( MedicalRecord "
 					+ "INNER JOIN consults ON MedicalRecord.mId = consults.mId "
-					+ "INNER JOIN Doctor ON consults.sId = Staff.sId ) "
+					+ "INNER JOIN Staff ON consults.sId = Staff.sId ) "
 					+ "WHERE MedicalRecord.mId = "+required_MID + ";";
 					executeTheQuery(str);
 
 					//ward charge if checked out -> end date is not NULL
 					System.out.println("Accomodation fees for the patient (if checked out) : ");
 					str = "SELECT "
-					+ "Ward.wCost*DATEDIFF(CheckInInfo.enddate,CheckInInfo.startdate) AS 'Accomodation Fees' "
-					+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
-					+ "INNER JOIN Ward ON assigns.wNumber = Ward.wNumber "
-					+ "WHERE MedicalRecord.mId = "+required_MID+" AND CheckInInfo.enddate IS NOT NULL);";
+					+ "Ward.wCost*DATEDIFF(MedicalRecord.enddate,MedicalRecord.startdate) AS 'Accomodation Fees' "
+					+ "FROM ( MedicalRecord INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
+					+ "INNER JOIN Ward ON assigns.wNumber = Ward.wNumber )"
+					+ "WHERE MedicalRecord.mId = "+required_MID+" AND MedicalRecord.enddate IS NOT NULL;";
 					executeTheQuery(str);
 					break;	
 				}
@@ -300,28 +300,16 @@ public class Billing {
 	}	
 
 	public void executeUpdate (String str){
-		try {	
-			conn.setAutoCommit(false);
+		try {
 			stmt = conn.prepareStatement(str);
 			int out = stmt.executeUpdate();
 			if (out == 1)
 				System.out.println("Updated Successfully");
-		} catch (SQLException e) {	
-			if (conn != null) {
-				try {
-					System.out.println("There is some issue updating details");
-					//rolling back in case of any error
-					conn.rollback();
-					//and then auto committing it
-					conn.setAutoCommit(true);
-					return;
-				} catch (SQLException e1) {
-					e.printStackTrace();
-					System.out.println("Failed! Retry.");
-				}
-			}
-		}	
-	}		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed! Retry.");
+		}
+	}
 
 	static void close(Connection conn) {
 		if (conn != null) {
