@@ -30,17 +30,7 @@ public class MedicalRecords{
 			System.out.println("Enter patient ID:");
 			String pid = reader.next();
 			str = "SELECT MAX(mId) from hasRecord where pId = "+pid+";";
-			int v = getVariable(str);
-			
-			str = "SELECT enddate from MedicalRecord where mId= " + v + ";";
-			try{
-				
-				Boolean check = checkNull(str);
-				if (!check){
-					System.out.println("Patient checked out. Update not possible");
-					break;
-				}
-				else{
+			int v = getVariable(str);			
 					System.out.println("\t1. Update Treatment in MedicalRecord\n\t2. Update Tests in MedicalRecord\n\t3. Update Drugs in MedicalRecord\n\t4. Exit");
 					int input = reader.nextInt();
 
@@ -49,12 +39,13 @@ public class MedicalRecords{
 							System.out.println("Select the Treatment plan value");
 							String tpt = reader.next();
 
-							str = "Update MedicalRecord set proTreatPlan=" + tpt + "where mId=" + v+";";
+							str = "Update MedicalRecord set proTreatPlan=" + tpt + " where mId=" + v+";";
 							executeUpdate(str);
 							break;
 						}
-
-						case 2: {
+				case 2: {
+							str = "select * from Tests;";
+							executeTheQuery(str);
 							System.out.println("Enter Test Id to update");
 							String tpt = reader.next();
 							str = "insert into prescribesTests VALUES("+v+","+tpt+");";
@@ -64,7 +55,9 @@ public class MedicalRecords{
 						}
 
 						case 3:{
-							System.out.println("Enter Test Id to update");
+							str = "select * from Drugs;";
+							executeTheQuery(str);
+							System.out.println("Enter Drugs Id to update");
 							String tpt = reader.next();
 							str = "insert into prescribesDrugs VALUES("+v+","+tpt+");";
 
@@ -79,11 +72,9 @@ public class MedicalRecords{
 							break;
 							 
 					}
-				}
-		    } catch (SQLException e) {
-				e.printStackTrace();
-				System.out.println("Failed! Retry.");
-			}
+				
+		    
+
 		}
 	}
 
@@ -174,7 +165,21 @@ public class MedicalRecords{
 		}
 		return x;
 	}
-
+public String getStrVariable(String str){
+		String x = "";
+		try {
+			stmt = conn.prepareStatement(str);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				x = rs.getString(1);
+			}
+			return x;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed! Retry.");
+		}
+		return x;
+	}
 	static void close(Connection conn) {
 		if (conn != null) {
 			try{
