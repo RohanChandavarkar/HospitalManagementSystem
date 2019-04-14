@@ -40,28 +40,51 @@ public class Billing {
 				case 1:	{		
 					System.out.println("Enter the payer SSN: ");
 					String ssn = reader.next();	
-					System.out.println("Enter the payment method: ");
-					String method = reader.next();
-					System.out.println("Enter the account number: ");
-					String account_number = reader.next();
-					System.out.println("Enter the routing number: ");
-					String routing_number = reader.next();
-					System.out.println("Enter the card number: ");
-					String card_number = reader.next();
-					System.out.println("Enter the expiry month: ");
-					String expiry_month = reader.next();
-					System.out.println("Enter expiry year: ");
-					String expiry_year = reader.next();
 					System.out.println("Enter billing address: ");
 					String address = reader.next();
-					str = "INSERT into billingAccount VALUES (" 
-					+ ssn + ", " + method + ", " + account_number + ", " 
-					+ routing_number + ", " + card_number + ", " + expiry_month 
-					+ ", " + expiry_year + ", " + address + ");";
+					System.out.println("Enter the payment method: \n\t1. Account\n\t2. Check \n\t3. Card");
+					int method = reader.nextInt();
+					switch(method){
+						case 1:{ 
+							System.out.println("Enter the account number: ");
+							String account_number = reader.next();
+							System.out.println("Enter the routing number: ");
+							String routing_number = reader.next();
+							str = "INSERT into BillingAccount VALUES ( '" 
+							+ ssn + "', 'Account', " + account_number + ", " 
+							+ routing_number + ", NULL, NULL, NULL, '" + address + "');";				
+							break;
+						}
+						case 2:{ 
+							System.out.println("Enter the account number: ");
+							String account_number = reader.next();
+							str = "INSERT into BillingAccount VALUES ( '" 
+							+ ssn + "', 'Check', " + account_number + ", NULL, NULL, NULL, NULL, '" 
+							+ address + "');";				
+							break;
+						}
+						case 3:{
+							System.out.println("Enter the card number: ");
+							String card_number = reader.next();
+							System.out.println("Enter the expiry month (MM): ");
+							String expiry_month = reader.next();
+							System.out.println("Enter expiry year (YYYY): ");
+							String expiry_year = reader.next();
+							str = "INSERT into BillingAccount VALUES ( '" 
+							+ ssn + "', 'Card', NULL, NULL, " + card_number + ", " + expiry_month 
+							+ ", " + expiry_year + ", '" + address + "');";				
+							break;
+						}
+						default: System.out.println("Please select a valid option");
+							str = "INSERT into BillingAccount VALUES ( '" 
+							+ ssn + "', NULL, NULL, NULL, NULL, NULL, NULL,'" + address + "');";				;
+					break;
+					}
+
 					executeInsert(str);
 					System.out.print("Enter the Patient ID they are paying for: ");
 					String toPay_pid = reader.next();
-					str = "INSERT IGNORE into paidBy(payerSSN, pId) values ( "+ ssn+","+toPay_pid +")";
+					str = "INSERT IGNORE into paidBy(payerSSN, pId) values ( '"+ ssn+"', "+toPay_pid +")";
 					executeInsert(str);
 					break;
 				}
@@ -72,40 +95,41 @@ public class Billing {
 					str = "Select max(mId) from hasRecord where pId = "+patient_id+";";
 					int required_MID = getVariable(str);
 					
-					str = "SELECT MedicalRecord.endDate FROM MedicalRecord where MID = "+required_MID+";";
+					//str = "SELECT MedicalRecord.endDate FROM MedicalRecord where MID = "+required_MID+";";
 					
-					Boolean checkIsNull = checkNull(str);
+					str = "SELECT compTreatment FROM MedicalRecord where MID = "+required_MID+";";
+					String compTreatment = getStrVariable(str);
 
-					if (checkIsNull) {
+					if (compTreatment == "N") {
 						// handle NULL field value
 						System.out.println("The patient is not yet checked out and so does not have any accomodation fee");
 						str1 = "SELECT " 
 						+ "sum(Tests.Tcost) AS 'Test Fees', Staff.ConsultationFee AS 'Consultation Fees',  sum("
 						+ "Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee' "
 						+ "FROM ( MedicalRecord " 
-						+ "INNER JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
-						+ "INNER JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
-						+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
-						+ "INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
-						+ "INNER JOIN Tests ON prescribesTests.tId = Tests.tId "
-						+ "INNER JOIN consults ON MedicalRecord.mId = consults.mId "
-						+ "INNER JOIN Staff ON consults.sId = Staff.sID ) "
+						+ "LEFT JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
+						+ "LEFT JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
+						+ "LEFT JOIN assigns ON MedicalRecord.mId = assigns.mId "
+						+ "LEFT JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
+						+ "LEFT JOIN Tests ON prescribesTests.tId = Tests.tId "
+						+ "LEFT JOIN consults ON MedicalRecord.mId = consults.mId "
+						+ "LEFT JOIN Staff ON consults.sId = Staff.sID ) "
 						+ "WHERE MedicalRecord.mId = "+required_MID+";";
 					}	
 					else{
 						str1 = "SELECT "
 						+ "Ward.wCost*DATEDIFF(MedicalRecord.enddate,MedicalRecord.startdate) AS 'Accomodation Fees', "
-						+ "sum(Tests.Tcost) AS 'Test Fees', Staff.ConsultationFee AS 'Consultation Fees',  sum("
-						+ "Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee' "
+						+ "sum(Tests.Tcost) AS 'Test Fees', Staff.ConsultationFee AS 'Consultation Fees', "
+						+ "sum(Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee' "
 						+ "FROM ( MedicalRecord "
-						+ "INNER JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
-						+ "INNER JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
-						+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
-						+ "INNER JOIN Ward ON assigns.wNumber = Ward.wNumber "
-						+ "INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
-						+ "INNER JOIN Tests ON prescribesTests.tId = Tests.tId "
-						+ "INNER JOIN consults ON MedicalRecord.mId = consults.mId "
-						+ "INNER JOIN Staff ON consults.sId = Staff.sID ) "
+						+ "LEFT JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
+						+ "LEFT JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
+						+ "LEFT JOIN assigns ON MedicalRecord.mId = assigns.mId "
+						+ "LEFT JOIN Ward ON assigns.wNumber = Ward.wNumber "
+						+ "LEFT JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
+						+ "LEFT JOIN Tests ON prescribesTests.tId = Tests.tId "
+						+ "LEFT JOIN consults ON MedicalRecord.mId = consults.mId "
+						+ "LEFT JOIN Staff ON consults.sId = Staff.sID ) "
 						+ "WHERE MedicalRecord.mId = " + required_MID + ";";
 
 					}
@@ -170,22 +194,44 @@ public class Billing {
 				case 4:	{
 					System.out.println("Enter the payer SSN to be updated: ");
 					String ssn = reader.next();	
-					System.out.println("Enter the payment method: ");
-					String method = reader.next();
-					System.out.println("Enter the account number: ");
-					String account_number = reader.next();
-					System.out.println("Enter the routing number: ");
-					String routing_number = reader.next();
-					System.out.println("Enter the card number: ");
-					String card_number = reader.next();
-					System.out.println("Enter the expiry month: ");
-					String expiry_month = reader.next();
-					System.out.println("Enter expiry year: ");
-					String expiry_year = reader.next();
 					System.out.println("Enter billing address: ");
 					String address = reader.next();
-
-					str = "UPDATE billingAccount SET payerSSN = "+ ssn + ", payMethod = "+ method + ", accountNumber = "+account_number+", routingNumber = "+routing_number+", cardNumber = "+card_number+", expiryMonth = "+expiry_month+", expiryYear = "+expiry_month+", address = "+address+" where payerSSN = "+ssn+";";
+					System.out.println("Enter the payment method: \n\t1. Account\n\t2. Check \n\t3. Card");
+					int method = reader.nextInt();
+					switch(method){
+						case 1:{ 
+							System.out.println("Enter the account number: ");
+							String account_number = reader.next();
+							System.out.println("Enter the routing number: ");
+							String routing_number = reader.next();
+							str = "UPDATE BillingAccount SET paymentMethod = 'Account', accountNumber = "+account_number+", routingNumber = "+routing_number+", cardNumber = NULL, expiryMonth = NULL, expiryYear = NULL, address = '"+address+"' where payerSSN = '"+ssn+"';";		
+							break;
+						}
+						case 2:{ 
+							System.out.println("Enter the account number: ");
+							String account_number = reader.next();
+							str = "UPDATE BillingAccount SET paymentMethod = 'Check', accountNumber = "+account_number+", routingNumber = NULL , cardNumber = NULL, expiryMonth = NULL, expiryYear = NULL, address = '"+address+"' where payerSSN = '"+ssn+"';";
+							break;
+						}
+						case 3:{
+							System.out.println("Enter the card number: ");
+							String card_number = reader.next();
+							System.out.println("Enter the expiry month (MM): ");
+							String expiry_month = reader.next();
+							System.out.println("Enter expiry year (YYYY): ");
+							String expiry_year = reader.next();
+							str = "UPDATE BillingAccount SET paymentMethod = 'Account', accountNumber = NULL, routingNumber = NULL, cardNumber = "+ card_number +" , expiryMonth = " + expiry_month +", expiryYear = " + expiry_year +", address = '"+address+"' where payerSSN = '"+ssn+"';";		
+							break;
+						}
+						default: System.out.println("Please select a valid option");
+							str = "UPDATE BillingAccount SET paymentMethod = 'Unknown', accountNumber = NULL, routingNumber = "
+							+ "NULL, cardNumber = NULL, expiryMonth = "
+							+ "NULL, expiryYear = NULL"
+							+ ", address = '"+address+"' where payerSSN = '"+ssn+"';";
+									;
+					break;
+					}
+					
 					executeUpdate(str);	
 					break;
 				}
@@ -193,7 +239,7 @@ public class Billing {
 				case 5:{
 					System.out.println("Enter the Payer's SSN to be deleted : ");
 					String ssn = reader.next();
-					str = "DELETE from billingAccount where payerSSN = "+ssn+";";
+					str = "DELETE from BillingAccount where payerSSN = '"+ssn+"';";
 					executeDelete(str);
 					break;
 				}
@@ -255,6 +301,22 @@ public class Billing {
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				x = rs.getInt(1);
+			}
+			return x;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Failed! Retry.");
+		}
+		return x;
+	}	
+
+	public String getStrVariable(String str){
+		String x = "";
+		try {
+			stmt = conn.prepareStatement(str);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				x = rs.getString(1);
 			}
 			return x;
 		} catch (SQLException e) {
