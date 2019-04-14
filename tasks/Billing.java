@@ -300,16 +300,28 @@ public class Billing {
 	}	
 
 	public void executeUpdate (String str){
-		try {
+		try {	
+			conn.setAutoCommit(false);
 			stmt = conn.prepareStatement(str);
 			int out = stmt.executeUpdate();
 			if (out == 1)
 				System.out.println("Updated Successfully");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("Failed! Retry.");
-		}
-	}
+		} catch (SQLException e) {	
+			if (conn != null) {
+				try {
+					System.out.println("There is some issue updating details");
+					//rolling back in case of any error
+					conn.rollback();
+					//and then auto committing it
+					conn.setAutoCommit(true);
+					return;
+				} catch (SQLException e1) {
+					e.printStackTrace();
+					System.out.println("Failed! Retry.");
+				}
+			}
+		}	
+	}		
 
 	static void close(Connection conn) {
 		if (conn != null) {
