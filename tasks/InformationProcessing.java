@@ -74,7 +74,7 @@ public class InformationProcessing {
 
 					str = "INSERT INTO `Patient`"
 					+ "VALUES ( " + pid + " , "+ pname + ", "+ pssn +", '"+pdob +"', "
-					+ pgender + ", "+ pphone +", " + paddr");";
+					+ pgender + ", "+ pphone +", " + paddr + ");";
 	
 					executeInsert(str);
 					break;
@@ -115,7 +115,7 @@ public class InformationProcessing {
 				case 4: 
                 
                     System.out.println("Enter Staff ID");
-                    String sid = reader.next()
+                    String sid = reader.next();
                     System.out.println("Enter Staff name");
                     String sname = reader.next();
                     System.out.println("Enter Professional title (or NULL)");
@@ -128,29 +128,29 @@ public class InformationProcessing {
                     System.out.println("Choose the Job Title: \n\t1. Doctor\n\t. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
                     String jtitle = reader.next();
                     switch(jtitle){
-                    	switch(jtitle){
                     	case 1: 
-                    	System.out.println("Enter Consultation Fee");
-                    	String fee = reader.next();
-                    	str = "SELECT * FROM Department;";
-                    	executeTheQuery(str);	
-	                  	System.out.println("\nEnter Department ID");
-	                    did = reader.next();
-	                    str1 = "INSERT INTO belongsTo VALUES(" + sid +", " +did+");";
-	                    executeInsert(str1);
-	                    System.out.println("Enter consultation fee");
-	                    fee = reader.next();
-	                    str = "INSERT INTO `Staff`"
-	                    + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
-	                    + sphone", "+ saddress +", " + fee");";
-                    	
+		                	System.out.println("Enter Consultation Fee");
+		                	String fee = reader.next();
+		                	str = "SELECT * FROM Department;";
+		                	executeTheQuery(str);	
+		                  	System.out.println("\nEnter Department ID");
+		                    did = reader.next();
+		                    str1 = "INSERT INTO belongsTo VALUES(" + sid +", " +did+");";
+		                    executeInsert(str1);
+		                    System.out.println("Enter consultation fee");
+		                    fee = reader.next();
+		                    str = "INSERT INTO `Staff`"
+		                    + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
+		                    + sphone + ", "+ saddress +", " + fee + ");";
+		                	break;
+
                     	case 2:
                     	case 3:
                     	case 4:
                     		str = "INSERT INTO Staff"
 			                + "VALUES ( " + sid+" , "+ sname + ", "+ jtitle +", "+ptitle+", "
-			                + sphone", "+ saddress +", NULL);";                   
-			               			break;
+			                + sphone + ", "+ saddress +", NULL);";                   
+	               			break;
                     	
                     	default: System.out.println("Please select a valid option");
 							break;
@@ -160,7 +160,7 @@ public class InformationProcessing {
 
                 case 5:
                     System.out.println("Enter staff ID");
-                    String sid = reader.next()
+                    String sid = reader.next();
                     System.out.println("Enter staff name");
                     String sname = reader.next();
                     System.out.println("Enter Professional title");
@@ -253,7 +253,7 @@ public class InformationProcessing {
 					break;
 		
 				case 10:
-					str = "SELECT sum(avail) FROM Ward;"
+					str = "SELECT sum(avail) FROM Ward;";
 					int avail = getVariable(str);
 					if(avail == null){
 							System.out.println("Could not retrieve some information");
@@ -286,7 +286,7 @@ public class InformationProcessing {
 
 							str = "INSERT INTO `Patient`"
 							+ "VALUES ( " + pid + " , "+ pname + ", "+ pssn +", '"+pdob +"', "
-							+ pgender + ", "+ pphone +", " + paddr");";
+							+ pgender + ", "+ pphone +", " + paddr + ");";
 			
 							executeInsert(str);
 
@@ -418,7 +418,7 @@ public class InformationProcessing {
 					System.out.println("Enter the Test Cost : ");
 					String tcost = reader.next();
 
-					str = "SELECT * from Department;"
+					str = "SELECT * from Department;";
 					executeTheQuery(str);
 
 					System.out.println("\nEnter the Department ID that it is done in : ");
@@ -517,7 +517,7 @@ public class InformationProcessing {
 			return x;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Failed! Retry.")
+			System.out.println("Failed! Retry.");
 		}
 	}	
 
@@ -562,7 +562,7 @@ public class InformationProcessing {
 				System.out.println("Inserted Successfully");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Failed! Retry.")
+			System.out.println("Failed! Retry.");
 		}
 	}	
 
@@ -574,7 +574,7 @@ public class InformationProcessing {
 				System.out.println("Deleted Successfully");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Failed! Retry.")
+			System.out.println("Failed! Retry.");
 		}
 	}	
 
@@ -586,7 +586,7 @@ public class InformationProcessing {
 				System.out.println("Updated Successfully");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Failed! Retry.")
+			System.out.println("Failed! Retry.");
 		}
 	}	
 }

@@ -77,7 +77,7 @@ public class MedicalRecords{
 				}
 		    } catch (SQLException e) {
 				e.printStackTrace();
-				System.out.println("Failed! Retry.")
+				System.out.println("Failed! Retry.");
 			}
 		}
 	}
@@ -102,7 +102,7 @@ public class MedicalRecords{
 	                System.out.println("Inserted Successfully");
 	        } catch (SQLException e) {
 	            e.printStackTrace();
-	            System.out.println("Failed! Retry.")
+	            System.out.println("Failed! Retry.");
 	        }
     }   
 
@@ -114,7 +114,7 @@ public class MedicalRecords{
 	                System.out.println("Updated Successfully");
 	        } catch (SQLException e) {
 	            e.printStackTrace();
-	            System.out.println("Failed! Retry.")
+	            System.out.println("Failed! Retry.");
 	        }
     }   
 
@@ -129,7 +129,7 @@ public class MedicalRecords{
 			return x;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Failed! Retry.")
+			System.out.println("Failed! Retry.");
 		}
 	}
 
