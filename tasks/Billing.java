@@ -31,7 +31,7 @@ public class Billing {
 		while(true){
 			System.out.println("\n\nSelect the required alternative\n"
 					+ "1. Enter information of the billing account\n" 
-					+ "2. Display atomized billing information \n" 
+					+ "2. Display itomized billing information \n" 
 					+ "3. Update information of billing account\n"
 					+ "4. Delete information of billing account\n" 
 					+ "5. Exit\n" 
