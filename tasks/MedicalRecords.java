@@ -34,9 +34,9 @@ public class MedicalRecords{
 			
 			str = "SELECT enddate from MedicalRecord where mId= " + v + ";";
 			try{
-				stmt = conn.prepareStatement(str);
-				rs = stmt.executeQuery();
-				if (!rs.wasNull()){
+				
+				Boolean check = checkNull(str);
+				if (!check){
 					System.out.println("Patient checked out. Update not possible");
 					break;
 				}
@@ -142,7 +142,22 @@ public class MedicalRecords{
 	            e.printStackTrace();
 	            System.out.println("Failed! Retry.");
 	        }
-    }   
+    }  
+	public Boolean checkNull(String str){
+		try{
+			int iVal = 0;
+			stmt = conn.prepareStatement(str);
+			rs = stmt.executeQuery();
+			if (rs.next()) 
+				if (rs.wasNull()) 
+					return true;
+				return false;
+		} catch (SQLException e){
+			e.printStackTrace();
+			System.out.println("Failed! Some error occured.");
+		}
+		return false;
+	} 
 
 	public int getVariable(String str){
 		int x = 0;

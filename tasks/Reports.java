@@ -48,9 +48,7 @@ public class Reports {
 					System.out.println("Enter the Year (YYYY) : ");
 					year = reader.next();		
 					str = "Select MR.MID, Diagnosis  From MedicalRecord as MR " 
-					+ "Where MR.MID IN ( Select aT.MID  From addedTo as aT " 
-					+ "Where aT.CID IN (Select CID from CheckInInfo " 
-					+ "where startdate between '"+year+"-"+month+"-01 00:00:00' AND '"+ year +"-"+ month +"-31 23:59:59')) " 
+					+ "where MR.startdate between '"+year+"-"+month+"-01 00:00:00' AND '"+ year +"-"+ month +"-31 23:59:59' " 
 					+ "AND MR.MID IN (Select hr.MID From hasRecord as hr where PID =" + pid + ")";
 	
 					executeTheQuery(str);
@@ -76,7 +74,7 @@ public class Reports {
 					month = reader.next();
 					System.out.println("Enter the Year (YYYY) : ");
 					year = reader.next();		
-					str = "Select count(*) from CheckInInfo "
+					str = "Select count(*) from MedicalRecord "
 					+ "where startdate between '"+year+"-"+month+"-01 00:00:00' AND '"+year+"-"+month+"-31 23:59:59'";
 
 					executeTheQuery(str);
@@ -95,7 +93,7 @@ public class Reports {
 					break;
 
 				case 6:
-					str = "Select type, (sum(type) - SUM(avail))/sum(type)*100 as 'Usage%' from Ward group by type";
+					str = "Select type, (sum(type) - SUM(avail)) AS 'Available Beds' ,(sum(type) - SUM(avail))/sum(type)*100 as 'Usage%' from Ward group by type";
 
 					executeTheQuery(str);
 					break;
@@ -103,7 +101,10 @@ public class Reports {
 				case 7:
 					System.out.println("Enter the Staff ID");
 					int sid = reader.nextInt();
-					str = "SELECT hR.pId FROM hasRecord as hR WHERE hR.mId IN (SELECT c.mId FROM consults AS c WHERE sId =" +sid+")  AND hR.mId IN (SELECT aT.mId FROM addedTo AS aT WHERE aT.cId IN (SELECT C.cId FROM CheckInInfo AS C WHERE C.enddate IS NULL))";
+					str = "SELECT hR.pId "
+					+ "FROM hasRecord as hR "
+					+ "WHERE hR.mId IN (SELECT c.mId FROM consults AS c WHERE sId =" +sid+") "
+					+ "AND hR.mId IN (SELECT MR.mId FROM MedicalRecord AS MR WHERE MR.enddate IS NULL);";
 
 					executeTheQuery(str);
 					break;
@@ -129,7 +130,7 @@ public class Reports {
 		}
 	}
 
-	public void printOutput(ResultSet rs)throws SQLException {
+	public void printOutput(ResultSet rs) throws SQLException {
 
 		// Prepare metadata object and get the number of columns.
     		ResultSetMetaData rsmd = rs.getMetaData();
