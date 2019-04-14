@@ -294,7 +294,7 @@ public class Billing {
 					//And then auto committing it
 					conn.setAutoCommit(true);
 					return;
-				}catch (SQLException e)	{	
+				}catch (SQLException e1)	{	
 					e.printStackTrace();
 					System.out.println("Failed! Retry.");
 		}
