@@ -34,7 +34,9 @@ public class Billing {
 					+ "3. Display itemized billing information for a patient\n"
 					+ "4. Update a payer's information\n"
 					+ "5. Delete a payer's information\n"
-					+ "6. Exit\n"
+					+ "6. Add payer for a patient\n"
+					+ "7. Display past bills for a patient\n"
+					+ "8. Exit\n"
 					);
 			int input = reader.nextInt();
 			switch (input) {
@@ -42,7 +44,8 @@ public class Billing {
 					System.out.println("Enter the payer SSN: ");
 					String ssn = reader.next();
 					System.out.println("Enter billing address: ");
-					String address = reader.next();
+					reader.nextLine();
+					String address = reader.nextLine();
 					System.out.println("Enter the payment method: \n\t1. Account\n\t2. Check \n\t3. Card");
 					int method = reader.nextInt();
 					switch(method){
@@ -224,7 +227,8 @@ public class Billing {
 					System.out.println("Enter the payer SSN to be updated: ");
 					String ssn = reader.next();
 					System.out.println("Enter billing address: ");
-					String address = reader.next();
+					reader.nextLine();
+					String address = reader.nextLine();
 					System.out.println("Enter the payment method: \n\t1. Account\n\t2. Check \n\t3. Card");
 					int method = reader.nextInt();
 					switch(method){
@@ -273,7 +277,114 @@ public class Billing {
 					break;
 				}
 
-				case 6: return;
+				case 6:{
+					System.out.print("Enter the Payer's SSN: ");
+					String ssn = reader.next();
+					System.out.print("Enter the Patient ID they are paying for: ");
+					String toPay_pid = reader.next();
+					str = "INSERT IGNORE into paidBy(payerSSN, pId) values ( '"+ ssn+"', "+toPay_pid +")";
+					executeInsert(str);
+					break;		
+				}
+
+				case 7:{
+					System.out.println("Enter the ID of patient to display all charges for : ");
+					String patient_id = reader.next();
+					str = "Select mId from hasRecord where pId = "+patient_id+";";
+					executeTheQuery(str);
+					System.out.println("Enter the MID from the list to display all charges for : ");
+					String required_MID = reader.next();
+					
+					str = "SELECT compTreatment FROM MedicalRecord where MID = "+required_MID+";";
+					String compTreatment = getStrVariable(str);
+
+					System.out.println("\nBilling Information : \n");
+					
+					if (compTreatment == "N") {
+						// handle NULL field value
+						System.out.println("The patient is not yet checked out and so does not have any accomodation fee");
+						str1 = "SELECT "
+						+ "sum(Tests.Tcost) AS 'Test Fees', Staff.ConsultationFee AS 'Consultation Fees',  sum("
+						+ "Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee' "
+						+ "FROM ( MedicalRecord "
+						+ "LEFT JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
+						+ "LEFT JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
+						+ "LEFT JOIN assigns ON MedicalRecord.mId = assigns.mId "
+						+ "LEFT JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
+						+ "LEFT JOIN Tests ON prescribesTests.tId = Tests.tId "
+						+ "LEFT JOIN consults ON MedicalRecord.mId = consults.mId "
+						+ "LEFT JOIN Staff ON consults.sId = Staff.sID ) "
+						+ "WHERE MedicalRecord.mId = "+required_MID+";";
+					}
+					else{
+						str1 = "SELECT "
+						+ "Ward.wCost*DATEDIFF(MedicalRecord.enddate,MedicalRecord.startdate) AS 'Accomodation Fees', "
+						+ "sum(Tests.Tcost) AS 'Test Fees', Staff.ConsultationFee AS 'Consultation Fees', "
+						+ "sum(Drugs.drugCost) AS 'Drug Fees', MedicalRecord.regFee AS 'Registration Fee' "
+						+ "FROM ( MedicalRecord "
+						+ "LEFT JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
+						+ "LEFT JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
+						+ "LEFT JOIN assigns ON MedicalRecord.mId = assigns.mId "
+						+ "LEFT JOIN Ward ON assigns.wNumber = Ward.wNumber "
+						+ "LEFT JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId "
+						+ "LEFT JOIN Tests ON prescribesTests.tId = Tests.tId "
+						+ "LEFT JOIN consults ON MedicalRecord.mId = consults.mId "
+						+ "LEFT JOIN Staff ON consults.sId = Staff.sID ) "
+						+ "WHERE MedicalRecord.mId = " + required_MID + ";";
+
+					}
+
+					executeTheQuery(str1);
+					
+					System.out.println("\nItemized Billing Information : \n");
+					
+					System.out.println("Tests Bill: ");
+					str = "SELECT Tests.TID AS 'Test ID', Tests.TName AS 'Test Name',Tests.Tcost AS 'Test Fees' "
+					+ "FROM ( MedicalRecord "
+					+ "INNER JOIN prescribesTests ON MedicalRecord.mId = prescribesTests.mId "
+					+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
+					+ "INNER JOIN Tests ON prescribesTests.tId = Tests.tId ) "
+					+ "WHERE MedicalRecord.mId = "+required_MID+";";
+					executeTheQuery(str);
+
+					//drugs charge
+					System.out.println("Drugs Bill:");
+					str = "SELECT Drugs.DrugID AS 'Drug ID', Drugs.DrugName AS 'Drug Name', Drugs.DrugCost AS 'Drug Cost'"
+					+ "FROM ( MedicalRecord "
+					+ "INNER JOIN prescribesDrugs ON MedicalRecord.mId = prescribesDrugs.mId "
+					+ "INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
+					+ "INNER JOIN Drugs ON prescribesDrugs.drugId = Drugs.drugId ) "
+					+ "WHERE MedicalRecord.mId = "+required_MID+";";
+					executeTheQuery(str);
+
+					//registration charge
+					System.out.println("Registration Fees Information :");
+					str =  "SELECT  regFee AS 'Registration Fee' "
+					+ "FROM MedicalRecord "
+					+ "WHERE mId = "+ required_MID + ";";
+					executeTheQuery(str);
+
+					//doctor consulation fee
+					System.out.println("Doctor's Consultation Fee :");
+					str = "SELECT Staff.ConsultationFee AS 'Consultation Fee' "
+					+ "FROM ( MedicalRecord "
+					+ "INNER JOIN consults ON MedicalRecord.mId = consults.mId "
+					+ "INNER JOIN Staff ON consults.sId = Staff.sId ) "
+					+ "WHERE MedicalRecord.mId = "+required_MID + ";";
+					executeTheQuery(str);
+
+					//ward charge if checked out -> end date is not NULL
+					System.out.println("Accomodation fees (if checked out) : ");
+					str = "SELECT "
+					+ "Ward.wCost*DATEDIFF(MedicalRecord.enddate,MedicalRecord.startdate) AS 'Accomodation Fee' "
+					+ "FROM ( MedicalRecord INNER JOIN assigns ON MedicalRecord.mId = assigns.mId "
+					+ "INNER JOIN Ward ON assigns.wNumber = Ward.wNumber )"
+					+ "WHERE MedicalRecord.mId = "+required_MID+" AND MedicalRecord.enddate IS NOT NULL;";
+					executeTheQuery(str);
+					break;
+				}
+
+				case 8: return;
 
 				default:
 					System.out.println("Please select a valid option");

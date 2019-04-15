@@ -77,7 +77,7 @@ public class InformationProcessing {
 					System.out.println("Phone : ");
 					String pphone = reader.next();
 					System.out.println("Address : ");
-					String paddr = reader.next();
+					String paddr = reader.nextLine();
 
 					str = "INSERT INTO `Patient`"
 					+ "VALUES ( " + pid + " , '"+ pname + "', '"+ pssn +"', '"+pdob +"', '"
@@ -90,7 +90,8 @@ public class InformationProcessing {
 					System.out.println("Enter the Patient ID to update: ");
 					String pid = reader.next();
 					System.out.println("Enter the Patient Name : ");
-					String pname = reader.next();
+					reader.nextLine();
+					String pname = reader.nextLine();
 					System.out.println("Enter the Patient SSN : ");
 					String pssn = reader.next();
 					System.out.println("DOB (YYYY-MM-DD): ");
@@ -100,7 +101,8 @@ public class InformationProcessing {
 					System.out.println("Phone : ");
 					String pphone = reader.next();
 					System.out.println("Address : ");
-					String paddr = reader.next();
+					reader.nextLine();
+					String paddr = reader.nextLine();
 
 					str = "UPDATE Patient SET pName = '"  + pname
 					+ "', SSN = '" + pssn +"', DOB = '"+pdob +"', pGender = '"  + pgender
@@ -124,7 +126,8 @@ public class InformationProcessing {
                     System.out.println("Enter Staff ID");
                     String sid = reader.next();
                     System.out.println("Enter Staff name");
-                    String sname = reader.next();
+                    reader.nextLine();
+					String sname = reader.nextLine();
 					System.out.println("Gender (M/F): ");
                     String pgender = reader.next();
 					System.out.println("Enter Professional title (or NULL)");
@@ -132,7 +135,8 @@ public class InformationProcessing {
                     System.out.println("Enter Phone Number");
                     String sphone = reader.next();
                     System.out.println("Enter Address");
-                    String saddress = reader.next();
+                    reader.nextLine();
+					String saddress = reader.nextLine();
 
                     System.out.println("Choose the Job Title: \n\t1. Doctor\n\t2. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
                     int jtitle = reader.nextInt();
@@ -189,7 +193,8 @@ public class InformationProcessing {
                     System.out.println("Enter phone");
                     String sphone = reader.next();
                     System.out.println("Enter Address");
-                    String saddress = reader.next();
+                    reader.nextLine();
+					String saddress = reader.nextLine();
 
                     System.out.println("Choose the Job Title: \n\t1. Doctor\n\t2. Nurse\n\t3. Billing Operator\n\t4. Front Desk Operator");
                     int jtitle = reader.nextInt();
@@ -366,7 +371,8 @@ public class InformationProcessing {
 					switch (input1) {
 						case 1:{
 							System.out.println("Enter the Patient Name : ");
-							String pname = reader.next();
+							reader.nextLine();
+							String pname = reader.nextLine();
 							System.out.println("Enter the Patient SSN : ");
 							String pssn = reader.next();
 							System.out.println("DOB (YYYY-MM-DD): ");
@@ -376,7 +382,8 @@ public class InformationProcessing {
 							System.out.println("Phone : ");
 							String pphone = reader.next();
 							System.out.println("Address : ");
-							String paddr = reader.next();
+							reader.nextLine();
+							String paddr = reader.nextLine();
 
 							str = "INSERT INTO `Patient`"
 							+ "VALUES ( " + pid + " , '"+ pname + "', '"+ pssn +"', '"+pdob +"', '"
@@ -394,7 +401,8 @@ public class InformationProcessing {
 							String startdate = reader.next();
 
 							System.out.println("Enter the diagnosis details : ");
-							String dd = reader.next();
+							reader.nextLine();
+							String dd = reader.nextLine();
 							System.out.println("Enter the registration fee : ");
 							String regfee = reader.next();
 							System.out.println("Enter the processing treatment plan");
@@ -532,7 +540,8 @@ public class InformationProcessing {
 					System.out.println("Enter the Drug ID : ");
 					int drugid = reader.nextInt();
 					System.out.println("Enter the Drug Name : ");
-					String drugname = reader.next();
+					reader.nextLine();
+					String drugname = reader.nextLine();
 					System.out.println("Enter the Drug Cost : ");
 					String drugcost = reader.next();
 
@@ -547,7 +556,8 @@ public class InformationProcessing {
 					System.out.println("Enter the Drug ID : ");
 					int drugid = reader.nextInt();
 					System.out.println("Enter the Drug Name : ");
-					String drugname = reader.next();
+					reader.nextLine();
+					String drugname = reader.nextLine();
 					System.out.println("Enter the Drug Cost : ");
 					String drugcost = reader.next();
 
@@ -570,7 +580,8 @@ public class InformationProcessing {
 					System.out.println("Enter the Test ID : ");
 					int tid = reader.nextInt();
 					System.out.println("Enter the Test Name : ");
-					String tname = reader.next();
+					reader.nextLine();
+					String tname = reader.nextLine();
 					System.out.println("Enter the Test Cost : ");
 					String tcost = reader.next();
 
@@ -625,7 +636,8 @@ public class InformationProcessing {
 					System.out.println("Enter the Test ID : ");
 					int tid = reader.nextInt();
 					System.out.println("Enter the Test Name : ");
-					String tname = reader.next();
+					reader.nextLine();
+					String tname = reader.nextLine();
 					System.out.println("Enter the Test Cost : ");
 					String tcost = reader.next();
 
@@ -649,7 +661,8 @@ public class InformationProcessing {
 					System.out.println("Enter the Department ID : ");
 					int did = reader.nextInt();
 					System.out.println("Enter the Department Name : ");
-					String dname = reader.next();
+					reader.nextLine();
+					String dname = reader.nextLine();
 
 					str = "INSERT INTO Department "
 					+ "VALUES ( " + did + " , '"+ dname +"');";
@@ -661,7 +674,8 @@ public class InformationProcessing {
 					System.out.println("Enter the Department ID : ");
 					int did = reader.nextInt();
 					System.out.println("Enter the Department Name : ");
-					String dname = reader.next();
+					reader.nextLine();
+					String dname = reader.nextLine();
 
 					str = "UPDATE Department SET deptName = '"+ dname + "' WHERE deptId = " + did + ";";
 					executeUpdate(str);
