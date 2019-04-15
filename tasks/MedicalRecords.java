@@ -2,6 +2,10 @@ package tasks;
 import java.sql.*;
 import java.util.*;
 
+/***
+ * Task 2 : update a new medical record 
+ * for each treatment, test, and check-in.
+ */
 public class MedicalRecords{
 	Connection conn;
 	static PreparedStatement stmt;
@@ -15,13 +19,6 @@ public class MedicalRecords{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void close() {
-		// closes the connection, statement and result set.
-		close(rs);
-		close(stmt);
-		close(conn);
 	}
 
 	public void menu(){
@@ -165,7 +162,7 @@ public class MedicalRecords{
 		}
 		return x;
 	}
-public String getStrVariable(String str){
+	public String getStrVariable(String str){
 		String x = "";
 		try {
 			stmt = conn.prepareStatement(str);
@@ -180,6 +177,19 @@ public String getStrVariable(String str){
 		}
 		return x;
 	}
+
+	/***
+     * closes the connection, statement and result set.
+     */
+	public void close() {
+		close(rs);
+		close(stmt);
+		close(conn);
+	}
+
+	/***
+     * closes the connection, statement and result set.
+     */
 	static void close(Connection conn) {
 		if (conn != null) {
 			try{
@@ -189,6 +199,9 @@ public String getStrVariable(String str){
 		}
 	}
 
+	/***
+     * closes the connection, statement and result set.
+     */
 	static void close(Statement st) {
 		if (st != null) {
 			try {
@@ -198,6 +211,9 @@ public String getStrVariable(String str){
 		}
 	}
 
+	/***
+     * closes the connection, statement and result set.
+     */
 	static void close(ResultSet rs) {
 		if (rs != null) {
 			try {
@@ -208,5 +224,4 @@ public String getStrVariable(String str){
 	}
 
 }
-
 

@@ -2,6 +2,15 @@ package tasks;
 import java.sql.*;
 import java.util.*;
 
+/***
+ * Task 4 : Reports. Generate reports: report the medical 
+ * history for a given patient and for a certain time period
+ * month/year). Return: the current usage status for all 
+ * wards/beds; the number of patients per month; the ward-usage
+ * percentage. Return information on all the patients a given
+ * doctor is currently responsible for. Return information 
+ * on hospital staff grouped by their role.
+ */
 public class Reports {
 	Connection conn;
 	static PreparedStatement stmt;
@@ -9,20 +18,13 @@ public class Reports {
 	static String str, str1,str2,str3;
 	static String month, year; 
 	static Scanner reader = new Scanner(System.in);
-
+	
 	public Reports(Connection conn) {
 		try {
 			this.conn = conn;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void close() {
-		// closes the connection, statement and result set.
-		close(rs);
-		close(stmt);
-		close(conn);
 	}
 
 	public void menu() {
@@ -152,6 +154,10 @@ public class Reports {
     		}
 	}
 
+	/***
+     * This method executes SELECT Statements
+     * @param str SELECt statement
+     */
 	public void executeTheQuery(String str){
 		try {
 			stmt = conn.prepareStatement(str);
@@ -162,8 +168,19 @@ public class Reports {
 			System.out.println("Failed! Retry.");
 		}
 	}
+	
+	/***
+     * closes the connection, statement and result set.
+     */
+	public void close() {
+		close(rs);
+		close(stmt);
+		close(conn);
+	}
 
-	// closing the connection, statement and result set
+	/***
+     * closes the connection, statement and result set.
+     */
 	static void close(Connection conn) {
 		if (conn != null) {
 			try{
@@ -173,6 +190,9 @@ public class Reports {
 		}
 	}
 
+	/***
+     * closes the connection, statement and result set.
+     */
 	static void close(Statement st) {
 		if (st != null) {
 			try {
@@ -182,6 +202,9 @@ public class Reports {
 		}
 	}
 
+	/***
+     * closes the connection, statement and result set.
+     */
 	static void close(ResultSet rs) {
 		if (rs != null) {
 			try {
